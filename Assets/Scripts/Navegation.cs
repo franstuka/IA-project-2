@@ -68,7 +68,7 @@ public class Navegation : MonoBehaviour {
         }
     }
 
-    public int SetDestinationPlayerAndCost(Vector3 pos) //move and update avaible movements
+    public byte SetDestinationPlayerAndCost(Vector3 pos) //move and update avaible movements
     {
         Vector2Int thisActualSquarePosition = GridMap.instance.CellCordFromWorldPoint(transform.position);
         Vector2Int targetActualSquarePosition = GridMap.instance.CellCordFromWorldPoint(pos);
@@ -79,7 +79,7 @@ public class Navegation : MonoBehaviour {
         {
             targetLastSquarePosition = targetActualSquarePosition;
             savedPath = Astar.GetPath(thisActualSquarePosition, targetActualSquarePosition);
-            return -GridMap.instance.grid[targetActualSquarePosition.x, targetActualSquarePosition.y].Cost;
+            return GridMap.instance.grid[targetActualSquarePosition.x, targetActualSquarePosition.y].GetMovementCost();
         }
         else
             return 0;

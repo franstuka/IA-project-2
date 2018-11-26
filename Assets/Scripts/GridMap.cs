@@ -16,10 +16,6 @@ public class GridMap : MonoBehaviour { //By default this is for a quad grid
             return;
         }
         instance = this;
-        bloquedMask = LayerMask.GetMask("Unwalkable");
-        chestMask = LayerMask.GetMask("Chest");
-        exitMask = LayerMask.GetMask("Exit");
-        enemyMask = LayerMask.GetMask("Enemy");
         temporalGridObjects = new List<Vector2Int>();
         cellDiameter = CellRadius * 2;
         gridSizeX = Mathf.RoundToInt(WorldSize.x / cellDiameter);
@@ -43,9 +39,6 @@ public class GridMap : MonoBehaviour { //By default this is for a quad grid
     [SerializeField] private Vector2 WorldSize;
     [SerializeField] private float CellRadius;
     private List<Vector2Int> temporalGridObjects;
-    private LayerMask bloquedMask;
-    private LayerMask chestMask;
-    private LayerMask exitMask;
     private LayerMask enemyMask;
     private float cellDiameter;
     private int gridSizeX;
@@ -72,23 +65,7 @@ public class GridMap : MonoBehaviour { //By default this is for a quad grid
             for(int y = 0; y < gridSizeY; y++)
             {
                 Vector3 worldPoint = gridBottonLeft + Vector3.right * (x * cellDiameter + CellRadius) + Vector3.forward * (y * cellDiameter + CellRadius);
-
-                if(Physics.CheckBox(worldPoint,Vector3.one * CellRadius,Quaternion.identity,bloquedMask)) //celltypes
-                {
-                    grid[x, y] = new Cell(CellTypes.blocked, worldPoint, 0);
-                }
-                else if (Physics.CheckBox(worldPoint, Vector3.one * CellRadius, Quaternion.identity, chestMask)) 
-                {
-                    grid[x, y] = new Cell(CellTypes.chest, worldPoint, 0);
-                }
-                else if (Physics.CheckBox(worldPoint, Vector3.one * CellRadius, Quaternion.identity, exitMask)) 
-                {
-                    grid[x, y] = new Cell(CellTypes.exit, worldPoint, 0);
-                }
-                else//last else
-                {
-                    grid[x, y] = new Cell(CellTypes.emphy, worldPoint, 0);
-                }
+                grid[x, y] = new Cell(CellTypes.PLAIN, worldPoint);
             }
         }
     }
@@ -102,9 +79,9 @@ public class GridMap : MonoBehaviour { //By default this is for a quad grid
         for (int i = 0; i<enemies.Length; i++)
         {
             pos = CellCordFromWorldPoint(enemies[i].collider.gameObject.transform.position);
-            if(grid[pos.x, pos.y].CellType == CellTypes.emphy)
+            if(grid[pos.x, pos.y].CellType == CellTypes.PLAIN) //if cell is void
             {
-                grid[pos.x, pos.y].CellType = CellTypes.enemy;
+                grid[pos.x, pos.y].CellType = CellTypes.PLAIN;//set enemie
                 temporalGridObjects.Add(new Vector2Int(pos.x, pos.y));
             }   
         }
@@ -114,7 +91,7 @@ public class GridMap : MonoBehaviour { //By default this is for a quad grid
     {
         for(int i = 0; i< temporalGridObjects.Count; i++)
         {
-            grid[temporalGridObjects[i].x, temporalGridObjects[i].y].CellType = CellTypes.emphy;  
+            grid[temporalGridObjects[i].x, temporalGridObjects[i].y].unityOrConstructionOnCell = null;  
         }
         temporalGridObjects = new List<Vector2Int>();
     }
@@ -151,40 +128,7 @@ public class GridMap : MonoBehaviour { //By default this is for a quad grid
 
         if (grid != null)
         {
-            if (seeTypes)
-            {
-                foreach (Cell n in grid)
-                {
-                    if (n.CellType == CellTypes.emphy)
-                    {
-                        Gizmos.color = Color.white;
-                    }
-                    else if (n.CellType == CellTypes.blocked)
-                    {
-                        Gizmos.color = Color.magenta;
-                    }
-                    else if (n.CellType == CellTypes.enemy)
-                    {
-                        Gizmos.color = Color.red;
-                    }
-                    else if (n.CellType == CellTypes.chest)
-                    {
-                        Gizmos.color = Color.yellow;
-                    }
-                    else if (n.CellType == CellTypes.exit)
-                    {
-                        Gizmos.color = Color.blue;
-                    }
-                    else
-                    {
-                        Gizmos.color = Color.black;
-                    }
-
-                    Gizmos.DrawCube(n.GlobalPosition, Vector3.one * (cellDiameter * 19 / 20));
-                }
-            }
-            /*
-            else if (seePathCost && enemySelected != null) //PATH COST
+            /*if (seePathCost && enemySelected != null) //PATH COST
             {
                 int maxCost = int.MinValue;
                 int minCost = int.MaxValue;

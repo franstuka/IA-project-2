@@ -363,9 +363,7 @@ public class AStarPathfinding { //By default this is for a quad grid
     {
         switch (GridMap.instance.grid[x, y].CellType) //banned positions
         {
-            case CellTypes.blocked:
-            case CellTypes.chest:
-            case CellTypes.exit:
+            case CellTypes.MOUNTAINS:
                 {
                     return false;
                 }
