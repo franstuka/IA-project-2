@@ -7,8 +7,13 @@ public class CombatStats : MonoBehaviour {
     public enum CombatStatsType{ MAXHP , HP , DAMAGE , DEFENSE };
     [SerializeField] private int MaxHp = 0;
     [SerializeField] private int HP = 0;
-    [SerializeField] private int Damage = 0;
+    [SerializeField] private float Force = 0;
+    [SerializeField] private float MaxForce = 0;
     [SerializeField] private int Defense = 0;
+
+    public enum UnitType { Caballeria, Peon , Lancero, General, Torre, Castillo };
+    [SerializeField] public UnitType Type;
+    private byte team;
 
     public Animator anim;
     
@@ -26,6 +31,15 @@ public class CombatStats : MonoBehaviour {
         anim = GetComponent<Animator>();
     }
 
+    public UnitType GetUnityType()
+    {
+        return UnitType.Caballeria;
+    }
+
+    public byte GetTeam()
+    {
+        return team;
+    }
     public int GetHP()
     {
         return HP;
@@ -38,13 +52,24 @@ public class CombatStats : MonoBehaviour {
 
     public virtual float GetDamage()
     {
-        return Damage;
+        return Force;
     }
 
     public float GetDefense()
     {
         return Defense;
     }
+
+    public void SetForce(float damage)
+    {
+        Force -= damage;
+        if (Force < 0)
+        {
+            Force = 0;
+            Die();
+        }
+    }
+
 
     public virtual void ChangeStats(CombatStatsType state , int valor)
     {
@@ -81,9 +106,9 @@ public class CombatStats : MonoBehaviour {
                         HP = MaxHp;
                 break;
             case 2:
-                Damage += valor;
-                if (Damage < 0)
-                    Damage = 0;
+                Force += valor;
+                if (Force < 0)
+                    Force = 0;
                 break;
             case 3:
                 Defense += valor;
@@ -108,9 +133,9 @@ public class CombatStats : MonoBehaviour {
                 }
                 break;
             case 2:
-                Damage = valor;
-                if (Damage < 0)
-                    Damage = 0;
+                Force = valor;
+                if (Force < 0)
+                    Force = 0;
                 break;
             case 3:
                 Defense = valor;
