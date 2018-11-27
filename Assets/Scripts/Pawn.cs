@@ -5,23 +5,25 @@ using UnityEngine;
 public class Pawn : Units {
     [SerializeField] private GameManager gameManager;
     private byte towerCost;
+    private bool isMining;
 
     // Use this for initialization
     void Start () {
         gameManager = GetComponent<GameManager>();
         towerCost = 200;
+        isMining = false;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        CreateTower();
+        CreateTower();        
 	}
 
     void CreateTower()
     {
         if(gameManager.playersGold[gameManager.turn] - towerCost >= 0)
         {
-            gameManager.playersGold[gameManager.turn] -= towerCost;
+            gameManager.ChangeGold(towerCost);            
         }
     }
 }

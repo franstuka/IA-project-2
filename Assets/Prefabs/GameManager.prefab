@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4452145591199694}
-  - component: {fileID: 114397389544298726}
+  - component: {fileID: 114530009143467848}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -40,7 +40,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &114397389544298726
+--- !u!114 &114530009143467848
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -51,3 +51,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54c4215f0f3ec794b81736dc68c70226, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  turn: 0
+  playersGold: f4010000f4010000
+  goldIncomeIncrement: 0

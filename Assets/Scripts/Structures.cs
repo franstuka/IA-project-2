@@ -46,7 +46,7 @@ public class Structures : CombatStats {
 
         if(gameManager.playersGold[gameManager.turn] - goldToSubstract >= 0)
         {
-            gameManager.playersGold[gameManager.turn] -= goldToSubstract;
+            gameManager.ChangeGold(goldToSubstract);            
         }
         
     }
