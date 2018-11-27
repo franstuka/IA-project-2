@@ -8,7 +8,7 @@ public class ScenarioGenerator : MonoBehaviour {
     //Percentajes, adobe this values the cell will be setted
     [SerializeField] float MountainPercentaje = 0.9f;
     [SerializeField] float HillPercentaje = 0.5f;
-    [SerializeField] float ForestPercenaje = 0.4f;
+    [SerializeField] float ForestPercenaje = 0.45f;
     [SerializeField] float ForestAdobeHillsPercenaje = 0.65f; //forest will override hills with less than this value
 
     [SerializeField] Color MountainColor;
@@ -18,7 +18,7 @@ public class ScenarioGenerator : MonoBehaviour {
     [SerializeField] Color CastleColor;
     [SerializeField] Color HillsColor;
     [SerializeField] Material material;
-    [SerializeField] int textureResolution = 1;
+    [SerializeField] int textureResolution = 20;
     [SerializeField] float noiseScale = 0.1f;
     [SerializeField] bool isRandom = true;
     [SerializeField] int seed;
@@ -46,40 +46,6 @@ public class ScenarioGenerator : MonoBehaviour {
         }
     }
 
-    private void CreateTexture(ref int numCellsX, ref int numCellsY, ref float cellRadius)
-    {
-        Texture2D newTexture = new Texture2D(numCellsX * textureResolution, numCellsY* textureResolution);
-        Debug.Log("Resolution = " + numCellsX * textureResolution + " , " + numCellsY * textureResolution);
-        for (int x = 0; x < numCellsX* textureResolution; x++)
-        {
-            for (int y = 0; y < numCellsY* textureResolution; y++)
-            {
-                float color = noise.Evaluate(new Vector3(x * cellRadius * noiseScale/ textureResolution, 0f, y * cellRadius * noiseScale/ textureResolution));
-                color = (color + 1) / 2;
-                newTexture.SetPixel(x, y, new Color(color, color, color));
-            }
-        }
-        newTexture.Apply();
-        material.mainTexture = newTexture;
-    }
-
-    private Texture2D CreateNewNoiseTexture(ref int numCellsX, ref int numCellsY, ref float cellRadius, float localNoiseScale , int seed) //Get Noise texture
-    {
-        Texture2D newTexture = new Texture2D(numCellsX * textureResolution, numCellsY * textureResolution);
-        Debug.Log("Resolution = " + numCellsX * textureResolution + " , " + numCellsY * textureResolution);
-        for (int x = 0; x < numCellsX * textureResolution; x++)
-        {
-            for (int y = 0; y < numCellsY * textureResolution; y++)
-            {
-                float color = noise.Evaluate(new Vector3(x * cellRadius * localNoiseScale / textureResolution, 0f, y * cellRadius * localNoiseScale / textureResolution));
-                color = (color + 1) / 2;
-                newTexture.SetPixel(x, y, new Color(color, color, color));
-            }
-        }
-        newTexture.Apply();
-        return newTexture;
-    }
-
     private void CreateScenatio()
     {
         float cellRadius = GridMap.instance.GetCellRadius();
@@ -88,21 +54,62 @@ public class ScenarioGenerator : MonoBehaviour {
 
         //SetSeedGen(seed); //set the seed
 
-        Texture2D temporalTexture = new Texture2D(numCellsX * textureResolution, numCellsY * textureResolution);
-        CreateTexture(ref numCellsX, ref numCellsY, ref cellRadius);
+        //Get Difuse
 
-        Texture2D noiseLayer1 = CreateNewNoiseTexture(ref numCellsX, ref numCellsY, ref cellRadius, noiseScale, seed); //noise for mountains
-        Texture2D noiseLayer2 = CreateNewNoiseTexture(ref numCellsX, ref numCellsY, ref cellRadius, noiseScale, seed + 1); //noise for woods
-        Texture2D noiseLayer3 = CreateNewNoiseTexture(ref numCellsX, ref numCellsY, ref cellRadius, noiseScale *10, seed + 3); //noise for resources
+        Texture2D difuseTexture = new Texture2D(numCellsX, numCellsY); //texture resolution = 1 because is the grid base layer
 
-        SetCellsProceduralSimple(CellTypes.PLAIN, 0.0f, ref numCellsX, ref numCellsY, ref temporalTexture, ref noiseLayer1); //set plain
-        SetCellsProceduralSimple(CellTypes.HILLS, HillPercentaje, ref numCellsX, ref numCellsY, ref temporalTexture, ref noiseLayer1); //set Hills
-        SetCellsProceduralSimple(CellTypes.MOUNTAINS, MountainPercentaje, ref numCellsX, ref numCellsY, ref temporalTexture, ref noiseLayer1); //set Mountains
-        SetCellsProceduralReplace(CellTypes.FOREST, ForestPercenaje, ForestAdobeHillsPercenaje, ref numCellsX, ref numCellsY, ref temporalTexture, ref noiseLayer2, ref noiseLayer1);
+        Texture2D noiseLayer1 = CreateNewNoiseTexture(ref numCellsX, ref numCellsY, ref cellRadius, noiseScale, 1 , seed); //noise for mountains
+        Texture2D noiseLayer2 = CreateNewNoiseTexture(ref numCellsX, ref numCellsY, ref cellRadius, noiseScale, 1 , seed + 1); //noise for woods
+        Texture2D noiseLayer3 = CreateNewNoiseTexture(ref numCellsX, ref numCellsY, ref cellRadius, noiseScale *10, 1 , seed + 3); //noise for resources
 
-        temporalTexture.Apply();
-        FinalTexture = temporalTexture;
+        SetCellsProceduralSimple(CellTypes.PLAIN, 0.0f, ref numCellsX, ref numCellsY, ref difuseTexture, ref noiseLayer1); //set plain
+        SetCellsProceduralSimple(CellTypes.HILLS, HillPercentaje, ref numCellsX, ref numCellsY, ref difuseTexture, ref noiseLayer1); //set Hills
+        SetCellsProceduralSimple(CellTypes.MOUNTAINS, MountainPercentaje, ref numCellsX, ref numCellsY, ref difuseTexture, ref noiseLayer1); //set Mountains
+        SetCellsProceduralReplace(CellTypes.FOREST, ForestPercenaje, ForestAdobeHillsPercenaje, ref numCellsX, ref numCellsY, ref difuseTexture, ref noiseLayer2, ref noiseLayer1);
+
+        difuseTexture.Apply();
+        FinalTexture = difuseTexture;
         material.mainTexture = FinalTexture;
+
+        //Get elevation texture
+
+        noiseLayer1 = CreateNewNoiseForSecundaryAlbedo(ref numCellsX, ref numCellsY, ref cellRadius, noiseScale, textureResolution, seed);
+        ElevationTexture = noiseLayer1;
+        material.SetTexture("_DetailAlbedoMap", noiseLayer1);
+    }
+
+    private Texture2D CreateNewNoiseTexture(ref int numCellsX, ref int numCellsY, ref float cellRadius, float localNoiseScale, int localTextureResolution, int seed) //Get Noise texture
+    {
+        Texture2D newTexture = new Texture2D(numCellsX * localTextureResolution, numCellsY * localTextureResolution);
+        Debug.Log("Resolution = " + numCellsX * localTextureResolution + " , " + numCellsY * localTextureResolution);
+        for (int x = 0; x < numCellsX * localTextureResolution; x++)
+        {
+            for (int y = 0; y < numCellsY * localTextureResolution; y++)
+            {
+                float color = noise.Evaluate(new Vector3(x * cellRadius * localNoiseScale / localTextureResolution, 0f, y * cellRadius * localNoiseScale / localTextureResolution));
+                color = (color + 1) / 2;
+                newTexture.SetPixel(x, y, new Color(color, color, color));
+            }
+        }
+        newTexture.Apply();
+        return newTexture;
+    }
+
+    private Texture2D CreateNewNoiseForSecundaryAlbedo(ref int numCellsX, ref int numCellsY, ref float cellRadius, float localNoiseScale, int localTextureResolution, int seed) //Get Noise texture
+    {
+        Texture2D newTexture = new Texture2D(numCellsX * localTextureResolution, numCellsY * localTextureResolution);
+        Debug.Log("Resolution = " + numCellsX * localTextureResolution + " , " + numCellsY * localTextureResolution);
+        for (int x = 0; x < numCellsX * localTextureResolution; x++)
+        {
+            for (int y = 0; y < numCellsY * localTextureResolution; y++)
+            {
+                float color = noise.Evaluate(new Vector3(x * cellRadius * localNoiseScale / localTextureResolution, 0f, y * cellRadius * localNoiseScale / localTextureResolution));
+                color = (color + 1) / 2;
+                newTexture.SetPixel(x, y, new Color(0.5f +  color /2, 0.5f +  color /2, 0.5f + color/2));
+            }
+        }
+        newTexture.Apply();
+        return newTexture;
     }
 
     private void SetCellsProceduralSimple(CellTypes cellTypes, float overridePercentaje , ref int numCellsX, ref int numCellsY, ref Texture2D finalTexture , ref Texture2D noiseTexture)
@@ -152,7 +159,10 @@ public class ScenarioGenerator : MonoBehaviour {
             for (int y = 0; y < numCellsY * textureResolution; y++)
             {
                 if(noiseTexture.GetPixel(x,y).grayscale > overridePercentaje)
+                {
                     finalTexture.SetPixel(x, y, colorToSet);
+                    GridMap.instance.grid[x/ textureResolution, y/ textureResolution].CellType = cellTypes;
+                }         
             }
         }
     }
@@ -206,6 +216,7 @@ public class ScenarioGenerator : MonoBehaviour {
                 if (noiseTexture.GetPixel(x, y).grayscale > baseOverridePercentaje && noiseTextureReplaced.GetPixel(x, y).grayscale < otherOverridePercentaje)
                 {
                     finalTexture.SetPixel(x, y, colorToSet);
+                    GridMap.instance.grid[x/ textureResolution, y/ textureResolution].CellType = cellTypes;
                 }
             }
         }

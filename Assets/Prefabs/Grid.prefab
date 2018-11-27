@@ -230,7 +230,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MountainPercentaje: 0.9
   HillPercentaje: 0.5
-  ForestPercenaje: 0.4
+  ForestPercenaje: 0.45
   ForestAdobeHillsPercenaje: 0.65
   MountainColor: {r: 0.9528302, g: 0.93784857, b: 0.9303578, a: 0}
   ForestColor: {r: 0.11211201, g: 0.308, b: 0.14827327, a: 0}
@@ -239,7 +239,7 @@ MonoBehaviour:
   CastleColor: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 0}
   HillsColor: {r: 0.509434, g: 0.43227127, b: 0.38688147, a: 0}
   material: {fileID: 2100000, guid: 1660004c2d5df4547a774d9e3c7aa8eb, type: 2}
-  textureResolution: 5
+  textureResolution: 20
   noiseScale: 0.1
   isRandom: 1
   seed: 0
