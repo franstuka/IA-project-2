@@ -5,16 +5,26 @@ using UnityEngine.UI;
 using TMPro;
 
 public class UI : MonoBehaviour {
-    [SerializeField] private GameManager gameManager;
-    [SerializeField] private TextMeshProUGUI goldText;    
+    [SerializeField] GameManager gameManager;
+    [SerializeField] private Button changeTurnButton;
+    [SerializeField] private TextMeshProUGUI changeTurnText;
+
 
 	// Use this for initialization
-	void Start () {          
-        goldText.text = "" + gameManager.playersGold[0];        
+	void Start () {
+        changeTurnButton.onClick.AddListener(NewTurn);
+        changeTurnText.color = new Color32(0, 0, 0, 255);
     }
 	
 	// Update is called once per frame
-	void Update () {       
+	void Update () {            
+        
+    }  
 
+    void NewTurn()
+    {
+        gameManager.SetTurn((byte)Mathf.Abs(gameManager.GetTurn() - 1));
     }
+
+
 }

@@ -1,28 +1,35 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
-public class GameManager : MonoBehaviour {   
-    public byte turn;
+public class GameManager : MonoBehaviour {
+    [SerializeField] private TextMeshProUGUI goldText;
+    private byte turn;
+    private LinkedList<GameObject> units;
     private byte playerOne;
     private byte playerTwo;
-    public int[] playersGold;
+    private int[] playersGold;
     private byte goldPerTurn;
     public int goldIncomeIncrement;
 
 	// Use this for initialization
 	void Awake () {        
         turn = 0;
+        units = new LinkedList<GameObject>();
         playerOne = 0;
-        playerTwo = 1;        
+        playerTwo = 1;
+        playersGold = new int[2];
+        playersGold[playerOne] = 500;
+        playersGold[playerTwo] = 500;
         goldPerTurn = 100;
-        goldIncomeIncrement = 0;             
+        goldIncomeIncrement = 0;
+        
 	}
 	
 	// Update is called once per frame
-	void Update () {   
-        ChangeTurn();       
-		
+	void Update () {        
+        ChangeTurn();        	
 	}
 
 
@@ -41,7 +48,8 @@ public class GameManager : MonoBehaviour {
                 goldIncomeIncrement += 25;
             }
         }*/
-        playersGold[turn] += goldPerTurn + goldIncomeIncrement;       
+        playersGold[turn] += goldPerTurn + goldIncomeIncrement;
+        goldText.text = "" + playersGold[turn];
     }
 
     void AddUnits()
@@ -51,8 +59,23 @@ public class GameManager : MonoBehaviour {
 
     public void ChangeGold(byte goldCost)
     {
-        playersGold[turn] -= goldCost;       
+        playersGold[turn] -= goldCost;
+        goldText.text = "" + playersGold[turn];
     }
 
+    public int GetPlayersGold(byte player)
+    {
+        return playersGold[player];
+    }
+
+    public byte GetTurn()
+    {
+        return turn;
+    }
+
+    public void SetTurn(byte newTurn)
+    {
+        this.turn = newTurn;
+    }
 
 }

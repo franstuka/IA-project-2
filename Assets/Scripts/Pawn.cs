@@ -21,7 +21,7 @@ public class Pawn : Units {
 
     void CreateTower()
     {
-        if(gameManager.playersGold[gameManager.turn] - towerCost >= 0)
+        if(gameManager.GetPlayersGold(gameManager.GetTurn()) - towerCost >= 0)
         {
             gameManager.ChangeGold(towerCost);            
         }
