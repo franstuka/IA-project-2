@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CombatManager : MonoBehaviour {
 
+    [SerializeField] private GameManager gameManager;
     private const float randomincrement = 20;
     private const float advantageincrement = 20;
     private const float cellincrement = 20;
@@ -14,8 +15,8 @@ public class CombatManager : MonoBehaviour {
     {
         float totaldamageA = 0;
         float totaldamageD = 0;
-        attacker = attacker.GetComponent<CombatStats>();
-        Vector2Int attackerpos = GridMap.instance.CellCordFromWorldPoint(defender.transform.position);
+
+        Vector2Int attackerpos = GridMap.instance.CellCordFromWorldPoint(attacker.transform.position);
         Vector2Int defenderpos = GridMap.instance.CellCordFromWorldPoint(defender.transform.position);
 
         totaldamageA += attacker.GetDamage();
@@ -265,28 +266,67 @@ public class CombatManager : MonoBehaviour {
     }
 
 
+    //private bool GeneralInRange(CombatStats attacker)
+    //{
+
+    //    Vector2 dimensions = GridMap.instance.GetGridSize();
+    //    Vector2Int attackerpos = GridMap.instance.CellCordFromWorldPoint(defender.transform.position);
+
+
+    //    for (int i = 0; i < generalrange * 2; i++)
+    //    {
+    //        for (int j = 0; j < generalrange * 2; j++)
+    //        {
+    //            if (0 <= (attackerpos.x - generalrange + i) && (attackerpos.x - generalrange + i) <= dimensions.x &&
+    //                0 <= (attackerpos.y - generalrange + i) && (attackerpos.y - generalrange + i) <= dimensions.y)
+    //            {
+    //                if( GridMap.instance.grid[attackerpos.x - generalrange + i, attackerpos.y - generalrange + i].Unidad != null)
+    //                {
+
+    //                }
+    //                if (Chesspieces[attacker.x - generalrange + i, attacker.y + generalrange + j].Type = PieceType.General &&
+    //                    Chesspieces[attacker.x - generalrange + i, attacker.y + generalrange + j].team == attacker.team &&
+    //                    ((attacker.x - generalrange + i != attacker.x) && (attacker.y + generalrange + j != attacker.y))
+    //                {
+    //                    return true;
+    //                }
+    //            }
+    //        }
+    //    }
+    //    return false;
+    //}
+
     private bool GeneralInRange(CombatStats attacker)
     {
+        Vector2 attackerpos = GridMap.instance.CellCordFromWorldPoint(attacker.transform.position);
+        byte team = gameManager.GetTurn();
+ 
+        LinkedList<GameObject>[] units = new LinkedList<GameObject>[2];
+        units = gameManager.GetUnits();
+        LinkedListNode<GameObject> unit; 
 
-        Vector2 dimensions = GridMap.instance.GetGridSize();
-        for (int i = 0; i < generalrange * 2; i++)
+        for (unit = units[team].First; unit != null; unit = unit.Next)
         {
-            for (int j = 0; j < generalrange * 2; j++)
+
+            if (unit.Value.UnitType == CombatStats.UnitType.General)
             {
-                if (0 < = (attacker.x - generalrange + i) <= GridSizeX && 0 < = (attacker.y - generalrange + i) <= GridSizeY)
-                {
-                    if (Chesspieces[attacker.x - generalrange + i, attacker.y + generalrange + j].Type = PieceType.General && Chesspieces[attacker.x - generalrange + i, attacker.y + generalrange + j].team == attacker.team && ((attacker.x - generalrange + i != attacker.x) && (attacker.y + generalrange + j != attacker.y))
+                Vector2 generalpos = GridMap.instance.CellCordFromWorldPoint(unit.Value.transform.position);
 
-
+                if (Mathf.Abs(generalpos[0] - attackerpos[0] ) <= generalrange && Mathf.Abs(generalpos[1] - attackerpos[1]) <= generalrange)
                 {
-                        return true;
-                    }
+                    return true;
                 }
-            }
-        }
-        return false;
-    }
 
+            }
+
+            unit = unit.Next;
+
+        }
+
+        return false;
+
+
+    }
     private void attackUnity(CombatStats defender, float totaldamage)
         {
             defender.SetForce(totaldamage);
