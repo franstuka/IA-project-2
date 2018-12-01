@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CellTypes { emphy, enemy, chest, exit ,blocked};
+public enum CellTypes {Bosque,Llanura,emphy,blocked,chest,exit,enemy};
 
 public class Cell {
 
