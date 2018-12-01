@@ -229,9 +229,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MountainPercentaje: 0.9
-  HillPercentaje: 0.5
-  ForestPercenaje: 0.45
-  ForestAdobeHillsPercenaje: 0.65
+  HillPercentaje: 0.6
+  ForestPercenaje: 0.5
+  ForestAdobeHillsPercenaje: 0.7
   MountainColor: {r: 0.9339623, g: 0.9339623, b: 0.9339623, a: 0}
   ForestColor: {r: 0.16487183, g: 0.3679245, b: 0.19297308, a: 0}
   PlainColor: {r: 0.7157485, g: 0.839, b: 0.651064, a: 0}

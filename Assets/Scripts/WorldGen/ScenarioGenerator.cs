@@ -11,6 +11,11 @@ public class ScenarioGenerator : MonoBehaviour {
     [SerializeField] float ForestPercenaje = 0.45f;
     [SerializeField] float ForestAdobeHillsPercenaje = 0.65f; //forest will override hills with less than this value
 
+    [SerializeField] float BordersMineSecureZone = 0.05f;
+    [SerializeField] float SecureZoneArroundCastle = 0.05f;
+    [SerializeField] float MidDivision = 0.3f;
+    [SerializeField] float DistanceBetweenMines = 0.1f;
+
     [SerializeField] Color MountainColor;
     [SerializeField] Color ForestColor;
     [SerializeField] Color PlainColor;
@@ -222,8 +227,10 @@ public class ScenarioGenerator : MonoBehaviour {
         }
     }
 
-    private void SetMinesPosition()
+    private void SetMinesPosition(ref int numCellsX, ref int numCellsY, ref Texture2D finalTexture , ref Texture2D noiseLayer)
     {
+        //Get mayor axis
+        int mayorAxis = numCellsX > numCellsY ? numCellsX : numCellsY;
 
     }
 
