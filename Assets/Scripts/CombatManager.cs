@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CombatManager : MonoBehaviour {
 
-    [SerializeField] private GameManager gameManager;
     private const float randomincrement = 20;
     private const float advantageincrement = 20;
     private const float cellincrement = 20;
@@ -201,9 +200,6 @@ public class CombatManager : MonoBehaviour {
 
                 case CombatStats.UnitType.Torre:
                 {
-                    totaldamageA += attacker.GetDamage();
-                    totaldamageA += (attacker.GetDamage() * randomincrement / 100) * Random.Range(0, 1);
-
                     if (Mathf.Abs(defenderpos[0] - attackerpos[0]) <= 1 &&  Mathf.Abs(defenderpos[1] - attackerpos[1]) <= 1)
                     {
                         totaldamageD += defender.GetDamage();
@@ -226,8 +222,7 @@ public class CombatManager : MonoBehaviour {
 
                 case CombatStats.UnitType.Castillo:
                 {
-                    totaldamageA += attacker.GetDamage();
-                    totaldamageA += (attacker.GetDamage() * randomincrement / 100) * Random.Range(0, 1);
+
 
                     if (Mathf.Abs(defenderpos[0] - attackerpos[0]) <= 1 && Mathf.Abs(defenderpos[1] - attackerpos[1]) <= 1)
                     {
@@ -265,50 +260,19 @@ public class CombatManager : MonoBehaviour {
         attackUnity(attacker, totaldamageD);
     }
 
-
-    //private bool GeneralInRange(CombatStats attacker)
-    //{
-
-    //    Vector2 dimensions = GridMap.instance.GetGridSize();
-    //    Vector2Int attackerpos = GridMap.instance.CellCordFromWorldPoint(defender.transform.position);
-
-
-    //    for (int i = 0; i < generalrange * 2; i++)
-    //    {
-    //        for (int j = 0; j < generalrange * 2; j++)
-    //        {
-    //            if (0 <= (attackerpos.x - generalrange + i) && (attackerpos.x - generalrange + i) <= dimensions.x &&
-    //                0 <= (attackerpos.y - generalrange + i) && (attackerpos.y - generalrange + i) <= dimensions.y)
-    //            {
-    //                if( GridMap.instance.grid[attackerpos.x - generalrange + i, attackerpos.y - generalrange + i].Unidad != null)
-    //                {
-
-    //                }
-    //                if (Chesspieces[attacker.x - generalrange + i, attacker.y + generalrange + j].Type = PieceType.General &&
-    //                    Chesspieces[attacker.x - generalrange + i, attacker.y + generalrange + j].team == attacker.team &&
-    //                    ((attacker.x - generalrange + i != attacker.x) && (attacker.y + generalrange + j != attacker.y))
-    //                {
-    //                    return true;
-    //                }
-    //            }
-    //        }
-    //    }
-    //    return false;
-    //}
-
     private bool GeneralInRange(CombatStats attacker)
     {
         Vector2 attackerpos = GridMap.instance.CellCordFromWorldPoint(attacker.transform.position);
-        byte team = gameManager.GetTurn();
+        byte team = GameManager.instance.GetTurn();
  
         LinkedList<GameObject>[] units = new LinkedList<GameObject>[2];
-        units = gameManager.GetUnits();
+        units = GameManager.instance.GetUnits();
         LinkedListNode<GameObject> unit; 
 
         for (unit = units[team].First; unit != null; unit = unit.Next)
         {
 
-            if (unit.Value.UnitType == CombatStats.UnitType.General)
+            if (unit.Value.GetComponent<CombatStats>().GetUnityType() == CombatStats.UnitType.General)
             {
                 Vector2 generalpos = GridMap.instance.CellCordFromWorldPoint(unit.Value.transform.position);
 
