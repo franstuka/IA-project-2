@@ -232,8 +232,8 @@ MonoBehaviour:
   HillPercentaje: 0.5
   ForestPercenaje: 0.45
   ForestAdobeHillsPercenaje: 0.65
-  MountainColor: {r: 0.9528302, g: 0.93784857, b: 0.9303578, a: 0}
-  ForestColor: {r: 0.11211201, g: 0.308, b: 0.14827327, a: 0}
+  MountainColor: {r: 0.9339623, g: 0.9339623, b: 0.9339623, a: 0}
+  ForestColor: {r: 0.16487183, g: 0.3679245, b: 0.19297308, a: 0}
   PlainColor: {r: 0.7157485, g: 0.839, b: 0.651064, a: 0}
   MinesColor: {r: 0.8867924, g: 0.651784, b: 0.08784264, a: 0}
   CastleColor: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 0}

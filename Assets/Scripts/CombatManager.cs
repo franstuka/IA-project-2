@@ -55,13 +55,13 @@ public class CombatManager : MonoBehaviour {
 
                     switch (GridMap.instance.grid[defenderpos[0], defenderpos[1]].CellType)
                     {
-                            case CellTypes.Llanura:
+                            case CellTypes.PLAIN:
                             {
                                 totaldamageA -= attacker.GetDamage() * cellincrement / 100;
                                 break;
                             }
 
-                            case CellTypes.Bosque:
+                            case CellTypes.FOREST:
                             {
                                 totaldamageA += attacker.GetDamage() * cellincrement / 100;
                                 break;
@@ -112,13 +112,13 @@ public class CombatManager : MonoBehaviour {
 
                     switch (GridMap.instance.grid[defenderpos[0], defenderpos[1]].CellType)
                     {
-                            case CellTypes.Llanura:
+                            case CellTypes.PLAIN:
                             {
                                 totaldamageA += attacker.GetDamage() * cellincrement / 100;
                                 break;
                             };
 
-                            case CellTypes.Bosque:
+                            case CellTypes.FOREST:
                             {
                                 totaldamageA -= attacker.GetDamage() * cellincrement / 100;
                                 break;
@@ -265,8 +265,8 @@ public class CombatManager : MonoBehaviour {
         Vector2 attackerpos = GridMap.instance.CellCordFromWorldPoint(attacker.transform.position);
         byte team = GameManager.instance.GetTurn();
  
-        List<LinkedList<GameObject>> units = new List<LinkedList<GameObject>>();
-        units = GameManager.instance.GetUnits();
+        List<LinkedList<GameObject>> units = GameManager.instance.GetUnitList();
+
         LinkedListNode<GameObject> unit; 
 
         for (unit = units[team].First; unit != null; unit = unit.Next)

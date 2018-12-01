@@ -2,16 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum UnitType { Caballeria, Peon, Lancero, General, Torre, Castillo };
+
 public class CombatStats : MonoBehaviour {
 
-    public enum CombatStatsType{ MAXHP , HP , DAMAGE , DEFENSE };
-    [SerializeField] private int MaxHp = 0;
-    [SerializeField] private int HP = 0;
+    public enum CombatStatsType{ MAXFORCE, FORCE, DAMAGE , DEFENSE };
+    public enum UnitType { Caballeria, Peon, Lancero, General, Torre, Castillo };
     [SerializeField] private float Force = 0;
     [SerializeField] private float MaxForce = 0;
     [SerializeField] private int Defense = 0;
-
-    public enum UnitType { Caballeria, Peon , Lancero, General, Torre, Castillo };
+    [SerializeField] private byte Tier = 0;
     [SerializeField] public UnitType Type;
     private byte team;
 
@@ -21,10 +21,6 @@ public class CombatStats : MonoBehaviour {
     [SerializeField] private AudioSource GetDamageSound;
     [SerializeField] private AudioSource DieSound;
 
-    private void OnEnable()
-    {
-        HP = MaxHp;
-    }
 
     private void Awake()
     {
@@ -40,14 +36,14 @@ public class CombatStats : MonoBehaviour {
     {
         return team;
     }
-    public int GetHP()
+    public float GetHP()
     {
-        return HP;
+        return Force;
     }
 
-    public int GetMaxHP()
+    public float GetMaxHP()
     {
-        return MaxHp;
+        return MaxForce;
     }
 
     public virtual float GetDamage()
@@ -76,34 +72,34 @@ public class CombatStats : MonoBehaviour {
         switch((int)state)
         {
             case 0:
-                MaxHp += valor;
-                if (MaxHp < 0)
+                MaxForce += valor;
+                if (MaxForce < 0)
                 {
-                    MaxHp = 0;
+                    MaxForce = 0;
                 }
-                if (MaxHp < HP)
+                if (MaxForce < Force)
                 {
-                    HP = MaxHp;
+                    Force = MaxForce;
                 }
                 break;
             case 1:
                 if(valor < 0)
                 {
                     if(1-Defense > 0)
-                        HP += valor * (1 - Defense);
+                        Force += valor * (1 - Defense);
                 }
                 else
                 {
-                    HP += valor;
+                    Force += valor;
                 }    
-                if (HP < 0)
+                if (Force < 0)
                 {
-                    HP = 0;
+                    Force = 0;
                     Die();
                 }
                 else
-                    if(HP>MaxHp)
-                        HP = MaxHp;
+                    if(Force > MaxForce)
+                        Force = MaxForce;
                 break;
             case 2:
                 Force += valor;
@@ -122,14 +118,14 @@ public class CombatStats : MonoBehaviour {
         switch ((int)state)
         {
             case 0:
-                MaxHp = valor;
+                MaxForce = valor;
                 break;
             case 1:
-                if(valor <= MaxHp)
-                    HP = valor;
+                if(valor <= MaxForce)
+                    Force = valor;
                 else
                 {
-                    HP = MaxHp;
+                    Force = MaxForce;
                 }
                 break;
             case 2:
@@ -148,5 +144,10 @@ public class CombatStats : MonoBehaviour {
     public virtual void Die()
     {
 
+    }
+
+    public byte GetTier()
+    {
+        return Tier;
     }
 }
