@@ -222,6 +222,11 @@ public class ScenarioGenerator : MonoBehaviour {
         }
     }
 
+    private void SetMinesPosition()
+    {
+
+    }
+
     private void SetSeedGen(int seed)
     {
         isRandom = false;
