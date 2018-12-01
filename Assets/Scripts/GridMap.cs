@@ -55,6 +55,12 @@ public class GridMap : MonoBehaviour { //By default this is for a quad grid
         UpdateEnemyPositions();
     }
 
+    public Vector2 GetGridSize()
+    {
+        Vector2 dimensions;
+        return  dimensions = new Vector2(gridSizeX, gridSizeY);
+    }
+
     private void CreateGrid()
     {
         grid = new Cell[gridSizeX, gridSizeY];
