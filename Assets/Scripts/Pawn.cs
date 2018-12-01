@@ -26,4 +26,9 @@ public class Pawn : Units {
             gameManager.ChangeGold(towerCost);            
         }
     }
+
+    public bool GetIsMining()
+    {
+        return isMining;
+    }
 }

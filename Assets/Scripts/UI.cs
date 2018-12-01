@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 
 public class UI : MonoBehaviour {
-    [SerializeField] GameManager gameManager;
+
     [SerializeField] private Button changeTurnButton;
     [SerializeField] private TextMeshProUGUI changeTurnText;
 
@@ -23,7 +23,7 @@ public class UI : MonoBehaviour {
 
     void NewTurn()
     {
-        gameManager.SetTurn((byte)Mathf.Abs(gameManager.GetTurn() - 1));
+        GameManager.instance.ChangeTurn();
     }
 
 
