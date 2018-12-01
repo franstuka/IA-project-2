@@ -265,7 +265,7 @@ public class CombatManager : MonoBehaviour {
         Vector2 attackerpos = GridMap.instance.CellCordFromWorldPoint(attacker.transform.position);
         byte team = GameManager.instance.GetTurn();
  
-        LinkedList<GameObject>[] units = new LinkedList<GameObject>[2];
+        List<LinkedList<GameObject>> units = new List<LinkedList<GameObject>>();
         units = GameManager.instance.GetUnits();
         LinkedListNode<GameObject> unit; 
 
