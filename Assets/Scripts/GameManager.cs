@@ -47,7 +47,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 
-    void ChangeTurn()
+    public void ChangeTurn()
     {
 
         UpdateGold();
@@ -100,6 +100,11 @@ public class GameManager : MonoBehaviour {
     public void SetTurn(byte newTurn)
     {
         turn = newTurn;
+    }
+
+    public List<LinkedList<GameObject>> GetUnitList()
+    {
+        return units;
     }
 
 }
