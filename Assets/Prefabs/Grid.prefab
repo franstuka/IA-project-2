@@ -232,17 +232,26 @@ MonoBehaviour:
   HillPercentaje: 0.6
   ForestPercenaje: 0.5
   ForestAdobeHillsPercenaje: 0.7
+  BordersMineSecureZone: 0.05
+  CastlePositionFromBorder: 0.15
+  SecureZoneArroundCastle: 0.02
+  CastleSize: 2
+  MidDivision: 0.3
+  DistanceBetweenMines: 0.1
   MountainColor: {r: 0.9339623, g: 0.9339623, b: 0.9339623, a: 0}
   ForestColor: {r: 0.16487183, g: 0.3679245, b: 0.19297308, a: 0}
   PlainColor: {r: 0.7157485, g: 0.839, b: 0.651064, a: 0}
   MinesColor: {r: 0.8867924, g: 0.651784, b: 0.08784264, a: 0}
   CastleColor: {r: 0.5566038, g: 0.5566038, b: 0.5566038, a: 0}
   HillsColor: {r: 0.509434, g: 0.43227127, b: 0.38688147, a: 0}
+  BlockedGoldColor: {r: 1, g: 0, b: 0, a: 0}
   material: {fileID: 2100000, guid: 1660004c2d5df4547a774d9e3c7aa8eb, type: 2}
   textureResolution: 20
   noiseScale: 0.1
   isRandom: 1
   seed: 0
+  SeeBlockedGoldZone: 1
+  ForceRandomSeed: 0
 --- !u!114 &114960905735694242
 MonoBehaviour:
   m_ObjectHideFlags: 1
