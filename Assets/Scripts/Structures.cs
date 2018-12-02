@@ -3,52 +3,74 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Structures : CombatStats {
-    [SerializeField] private GameManager gameManager;   
-    private byte[] UnitCost;
+
+
+    [SerializeField] private GameManager gameManager;
+    private const byte MaxSlots = 3;
+    private UnitType[] slotsType;
+    private byte[] contTypes;
+    private byte[] UnitCost;  
     private byte unitSelected;
+    private byte range;
+    private byte slots;  
+    private bool isCastle;
     
 
 
 	// Use this for initialization
 	void Start () {
         gameManager = GetComponent<GameManager>();
-        UnitCost = new byte[3]; //0: Pawn, 1: Lancer, 2: Horseman
+        slotsType = new UnitType[3];
+        contTypes = new byte[3];
+        UnitCost = new byte[4]; //0: Pawn, 1: Lancer, 2: Horseman, 3: General
         UnitCost[0] = 50;
         UnitCost[1] = 125;
-        UnitCost[2] = 150;        
+        UnitCost[2] = 150;
+        UnitCost[3] = 200;    
 	}
 	
 	// Update is called once per frame
-	void Update () {
-        CreateUnit();
-		
+	void Update () {    
+           		
 	}
 
-
-    void CreateUnit()
+    void CreateUnit(UnitType type, CombatStats torre)
     {
-        byte goldToSubstract = 0;
-
-        if(unitSelected == 0)
+        if (slots <= MaxSlots)
         {
-            goldToSubstract = UnitCost[0];
-        }
+            byte goldToSubstract = 0;
+            GameObject piece = new GameObject();
 
-        else if(unitSelected == 1)
-        {
-            goldToSubstract = UnitCost[1];
-        }
+            switch (type)
+            {
+                case UnitType.Peon:
+                    goldToSubstract = UnitCost[0];
+                    piece = GameObject.Find("Peon");                   
+                    break;
 
-        else if(unitSelected == 2)
-        {
-            goldToSubstract = UnitCost[2];
-        }
+                case UnitType.Lancero:
+                    goldToSubstract = UnitCost[1];
+                    piece = GameObject.Find("Lancero");
+                    break;
 
-        if(gameManager.GetPlayersGold(gameManager.GetTurn()) - goldToSubstract >= 0)
-        {
-            gameManager.ChangeGold(goldToSubstract);            
-        }
-        
+                case UnitType.Caballeria:
+                    goldToSubstract = UnitCost[2];
+                    piece = GameObject.Find("Caballeria");
+                    break;
+
+                case UnitType.General:
+                    goldToSubstract = UnitCost[3];
+                    piece = GameObject.Find("General");
+                    break;             
+            }
+
+            if (gameManager.GetPlayersGold(gameManager.GetTurn()) - goldToSubstract >= 0)
+            {
+                gameManager.ChangeGold(goldToSubstract);
+                slots++;
+                Vector2Int posTorre = GridMap.instance.CellCordFromWorldPoint(torre.transform.position);
+                Instantiate(piece, new Vector3 (posTorre.x, posTorre.y, 0) , Quaternion.identity);                              
+            }                                    
+        }                                            
     }
-
 }
