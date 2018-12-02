@@ -3,24 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Structures : CombatStats {
-
-
-    [SerializeField] private GameManager gameManager;
-    private const byte MaxSlots = 3;
-    private UnitType[] slotsType;
+    
+    private const byte maxSlots = 3; 
     private byte[] contTypes;
     private byte[] UnitCost;  
     private byte unitSelected;
     private byte range;
-    private byte slots;  
-    private bool isCastle;
-    
+    private byte slots;   
+    private struct unitData{
+        string unit;
+        byte tier;
+        float maxForce;
+        float force;
+        float maxDamage;
+        byte turn;
+    }
+
+    private LinkedList<unitData> units;
 
 
-	// Use this for initialization
-	void Start () {
-        gameManager = GetComponent<GameManager>();
-        slotsType = new UnitType[3];
+    // Use this for initialization
+    void Start () {
         contTypes = new byte[3];
         UnitCost = new byte[4]; //0: Pawn, 1: Lancer, 2: Horseman, 3: General
         UnitCost[0] = 50;
@@ -50,7 +53,7 @@ public class Structures : CombatStats {
 
     void CreateUnit(UnitType type, CombatStats torre)
     {
-        if (slots <= MaxSlots)
+        if (slots <= maxSlots)
         {
             byte goldToSubstract = 0;
             GameObject piece = new GameObject();
@@ -78,9 +81,9 @@ public class Structures : CombatStats {
                     break;             
             }
 
-            if (gameManager.GetPlayersGold(gameManager.GetTurn()) - goldToSubstract >= 0)
+            if (GameManager.instance.GetPlayersGold(GameManager.instance.GetTurn()) - goldToSubstract >= 0)
             {
-                gameManager.ChangeGold(goldToSubstract);
+                GameManager.instance.ChangeGold(goldToSubstract);
                 slots++;
                 Vector2Int posTorre = GridMap.instance.CellCordFromWorldPoint(torre.transform.position);
                 Instantiate(piece, new Vector3 (posTorre.x, posTorre.y, 0) , Quaternion.identity);                              

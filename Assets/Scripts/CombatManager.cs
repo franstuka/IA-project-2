@@ -293,7 +293,7 @@ public class CombatManager : MonoBehaviour {
     }
     private void attackUnity(CombatStats defender, float totaldamage)
         {
-            defender.SetForce(totaldamage);
+            defender.ChangeStats(CombatStats.CombatStatsType.FORCE, totaldamage);        
         }
 
 }
