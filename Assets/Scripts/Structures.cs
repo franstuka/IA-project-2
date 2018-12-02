@@ -30,9 +30,23 @@ public class Structures : CombatStats {
 	}
 	
 	// Update is called once per frame
-	void Update () {    
-           		
-	}
+	void Update () {
+        if (Input.GetKey("a")) {
+           //createUnit(UnitType.Peon, );
+        }
+        if (Input.GetKey("s")){
+           //createUnit(UnitType.Lancero, );
+        }
+
+        if (Input.GetKey("d")){
+           //createUnit(UnitType.Caballeria, );
+        }
+
+        if (Input.GetKey("f")){
+           //createUnit(UnitType.General, );
+        }
+
+    }
 
     void CreateUnit(UnitType type, CombatStats torre)
     {

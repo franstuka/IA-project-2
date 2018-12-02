@@ -15,8 +15,12 @@ public class Pawn : Units {
 	
 	// Update is called once per frame
 	void Update () {
-                
-	}
+        if (Input.GetKey("g"))
+        {
+            //createTowee( );
+        }
+
+    }
 
     void CreateTower(CombatStats pos)
     {
