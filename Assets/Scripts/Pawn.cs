@@ -4,26 +4,32 @@ using UnityEngine;
 
 public class Pawn : Units {
     [SerializeField] private GameManager gameManager;
-    private byte towerCost;
+    private byte towerCost = 200;
     private bool isMining;
 
     // Use this for initialization
     void Start () {
         gameManager = GetComponent<GameManager>();
-        towerCost = 200;
         isMining = false;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        CreateTower();        
-	}
+        if (Input.GetKey("g"))
+        {
+            //createTowee( );
+        }
 
-    void CreateTower()
+    }
+
+    void CreateTower(CombatStats pos)
     {
         if(gameManager.GetPlayersGold(gameManager.GetTurn()) - towerCost >= 0)
         {
-            gameManager.ChangeGold(towerCost);            
+            gameManager.ChangeGold(towerCost);
+            GameObject torre = GameObject.Find("Torre");
+            Vector2Int posicion = GridMap.instance.CellCordFromWorldPoint(pos.transform.position);
+            Instantiate(torre, new Vector3(posicion.x, posicion.y, 0) , Quaternion.identity);          
         }
     }
 
