@@ -17,7 +17,7 @@ public class Pawn : Units {
 	void Update () {
         if (Input.GetKey("g"))
         {
-            //createTowee( );
+            //createTower( );
         }
 
     }
