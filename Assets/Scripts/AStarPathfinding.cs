@@ -12,7 +12,7 @@ public class AStarPathfinding { //By default this is for a quad grid
     private AStarAlgorithmState state;
     private UpdateMode updateMode;
     private const int normalCost = 10;
-    private const int diagonalCost = 14;
+    private const int diagonalCost = 10;
     private const int enemyInSameCellCost = 6;
     private uint maxSteps;
     private uint maxAllowedSteps = 200;

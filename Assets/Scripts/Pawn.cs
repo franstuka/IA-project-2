@@ -3,27 +3,32 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Pawn : Units {
-    [SerializeField] private GameManager gameManager;
-    private byte towerCost;
+    
+    private byte towerCost = 200;
     private bool isMining;
 
     // Use this for initialization
-    void Start () {
-        gameManager = GetComponent<GameManager>();
-        towerCost = 200;
+    void Start () {      
         isMining = false;
     }
 	
 	// Update is called once per frame
 	void Update () {
-        CreateTower();        
-	}
-
-    void CreateTower()
-    {
-        if(gameManager.GetPlayersGold(gameManager.GetTurn()) - towerCost >= 0)
+        if (Input.GetKey("g"))
         {
-            gameManager.ChangeGold(towerCost);            
+            //createTowee( );
+        }
+
+    }
+
+    void CreateTower(CombatStats pos)
+    {
+        if(GameManager.instance.GetPlayersGold(GameManager.instance.GetTurn()) - towerCost >= 0)
+        {
+            GameManager.instance.ChangeGold(towerCost);
+            GameObject torre = GameObject.Find("Torre");
+            Vector2Int posicion = GridMap.instance.CellCordFromWorldPoint(pos.transform.position);
+            Instantiate(torre, new Vector3(posicion.x, posicion.y, 0) , Quaternion.identity);          
         }
     }
 

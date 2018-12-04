@@ -292,18 +292,13 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 114096393352884648, guid: 5d77307fb853664479c761d701be67c5,
         type: 2}
-      propertyPath: HillPercentaje
-      value: 0.6
+      propertyPath: SeeBlockedGoldZone
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114096393352884648, guid: 5d77307fb853664479c761d701be67c5,
         type: 2}
-      propertyPath: ForestAdobeHillsPercenaje
-      value: 0.7
-      objectReference: {fileID: 0}
-    - target: {fileID: 114096393352884648, guid: 5d77307fb853664479c761d701be67c5,
-        type: 2}
-      propertyPath: ForestPercenaje
-      value: 0.5
+      propertyPath: isRandom
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 5d77307fb853664479c761d701be67c5, type: 2}

@@ -6,13 +6,15 @@ public enum UnitType { Caballeria, Peon, Lancero, General, Torre, Castillo };
 
 public class CombatStats : MonoBehaviour {
 
-    public enum CombatStatsType{ MAXFORCE, FORCE, DAMAGE , DEFENSE };
+    public enum CombatStatsType{ MAXFORCE, FORCE, MAXDAMAGE, DAMAGE};
     public enum UnitType { Caballeria, Peon, Lancero, General, Torre, Castillo };
+    [SerializeField] private byte tier = 0;
     [SerializeField] private float Force = 0;
     [SerializeField] private float MaxForce = 0;
-    [SerializeField] private int Defense = 0;
-    [SerializeField] private byte Tier = 0;
+    [SerializeField] private float MaxDamage = 0;
+    [SerializeField] private float Damage;
     [SerializeField] public UnitType Type;
+
     private byte team;
 
     public Animator anim;
@@ -25,6 +27,7 @@ public class CombatStats : MonoBehaviour {
     private void Awake()
     {
         anim = GetComponent<Animator>();
+        Damage = MaxDamage;
     }
 
     public UnitType GetUnityType()
@@ -36,38 +39,35 @@ public class CombatStats : MonoBehaviour {
     {
         return team;
     }
-    public float GetHP()
+
+    public float GetForce()
     {
         return Force;
     }
 
-    public float GetMaxHP()
+    public float GetMaxForce()
     {
         return MaxForce;
     }
 
-    public virtual float GetDamage()
+    public float GetMaxDamage()
     {
-        return Force;
+        return MaxDamage;
     }
 
-    public float GetDefense()
+    public float GetDamage()
+    {
+        return MaxDamage * (100 * Force / MaxForce);
+    }
+
+
+    /*public float GetDefense()
     {
         return Defense;
-    }
-
-    public void SetForce(float damage)
-    {
-        Force -= damage;
-        if (Force < 0)
-        {
-            Force = 0;
-            Die();
-        }
-    }
+    }*/
 
 
-    public virtual void ChangeStats(CombatStatsType state , int valor)
+    public virtual void ChangeStats(CombatStatsType state , float valor)
     {
         switch((int)state)
         {
@@ -83,12 +83,12 @@ public class CombatStats : MonoBehaviour {
                 }
                 break;
             case 1:
-                if(valor < 0)
+                /*if(valor < 0)
                 {
                     if(1-Defense > 0)
                         Force += valor * (1 - Defense);
-                }
-                else
+                }*/
+                if(valor >= 0)
                 {
                     Force += valor;
                 }    
@@ -102,18 +102,18 @@ public class CombatStats : MonoBehaviour {
                         Force = MaxForce;
                 break;
             case 2:
-                Force += valor;
-                if (Force < 0)
-                    Force = 0;
-                break;
-            case 3:
+                MaxDamage += valor;
+                if (MaxDamage < 0)
+                    MaxDamage = 0;
+                break;        
+            /*case 3:
                 Defense += valor;
                 if (Defense < 0)
                     Defense = 0;
-                break;
+                break;*/
         }
     }
-    public virtual void SetStats(CombatStatsType state, int valor)
+    public virtual void SetStats(CombatStatsType state, float valor)
     {
         switch ((int)state)
         {
@@ -129,15 +129,15 @@ public class CombatStats : MonoBehaviour {
                 }
                 break;
             case 2:
-                Force = valor;
-                if (Force < 0)
-                    Force = 0;
+                MaxDamage = valor;
+                if (MaxDamage < 0)
+                    MaxDamage = 0;
                 break;
-            case 3:
+            /*case 3:
                 Defense = valor;
                 if (Defense < 0)
                     Defense = 0;
-                break;
+                break;*/
         }
     }
 
@@ -148,6 +148,11 @@ public class CombatStats : MonoBehaviour {
 
     public byte GetTier()
     {
-        return Tier;
+        return tier;
+    }
+
+    public void SetTier()
+    {
+        tier++;
     }
 }
