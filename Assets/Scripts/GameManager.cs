@@ -19,7 +19,8 @@ public class GameManager : MonoBehaviour {
         units = new List<LinkedList<GameObject>>();
         for (int i = 0; i < playersNum; i++)
         {
-            units[i] = new LinkedList<GameObject>();
+            //units[i] = new LinkedList<GameObject>();
+            units.Add(new LinkedList<GameObject>());
         }
         playersGold = new int[playersNum];
     }
