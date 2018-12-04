@@ -30,6 +30,45 @@ public class PlayerMovement : CombatStats
                     Cell cellAux = GridMap.instance.CellFromWorldPoint(hit.point);
 
                     if (adyacents.Contains(cellAux)) {
+                        if (cellAux.unityOrConstructionOnCell && (cellAux.unityOrConstructionOnCell.GetTeam() != GetTeam() || cellAux.unityOrConstructionOnCell.GetUnityType() != GetUnityType()))
+                        {
+                            nav.SetDestinationPlayerAndCost(cellAux.GlobalPosition);
+                            LinkedList<Vector2Int> aux = nav.GetSavedPath();
+                            byte pasos = 0;
+                            for (LinkedListNode<Vector2Int> auxNode = aux.First; auxNode.Value != null; auxNode = auxNode.Next)
+                            {
+                                pasos += GridMap.instance.grid[auxNode.Value.x, auxNode.Value.y].GetMovementCost();
+                            }
+
+                            GetComponent<Units>().SetMovementsAvailable( (byte)(GetComponent<Units>().GetMovementsAvailable() - pasos) );
+
+                            aux.RemoveLast();
+                            if (cellAux.unityOrConstructionOnCell.GetTeam() != GetTeam())
+                            {
+                                StartCoroutine(WaitUnitilStoped(cellAux, 1));
+                            }
+                        }
+                        else if (cellAux.unityOrConstructionOnCell && cellAux.unityOrConstructionOnCell.GetTeam() == GetTeam())
+                        {
+                            nav.SetDestinationPlayerAndCost(cellAux.GlobalPosition);
+                            LinkedList<Vector2Int> aux = nav.GetSavedPath();
+                            byte pasos = 0;
+                            for (LinkedListNode<Vector2Int> auxNode = aux.First; auxNode.Value != null; auxNode = auxNode.Next)
+                            {
+                                pasos += GridMap.instance.grid[auxNode.Value.x, auxNode.Value.y].GetMovementCost();
+                            }
+
+                            GetComponent<Units>().SetMovementsAvailable((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
+
+                            if (cellAux.unityOrConstructionOnCell.GetUnityType() == this.GetUnityType())
+                            {
+                                StartCoroutine(WaitUnitilStoped(cellAux, 2));
+                            }
+                            else if (cellAux.unityOrConstructionOnCell.GetUnityType() == UnitType.Torre)
+                            {
+                                StartCoroutine(WaitUnitilStoped(cellAux, 3));
+                            }
+                        }
                         nav.SetDestinationPlayerAndCost(cellAux.GlobalPosition);
                     }
                     //nav.SetDestinationPlayerAndCost(hit.point); //update movements and move
@@ -38,10 +77,44 @@ public class PlayerMovement : CombatStats
         }
 	}
 
+    IEnumerator WaitUnitilStoped(Cell cellToGo, byte action)
+    {
+        yield return new WaitUntil(()=>nav.GetStopped());
+
+        switch (action)
+        {
+            case 1:
+                {
+                    CombatManager.instance.combat(this, cellToGo.unityOrConstructionOnCell);
+
+                    if (!cellToGo.unityOrConstructionOnCell)
+                    {
+                        nav.SetDestinationPlayerAndCost(cellToGo.GlobalPosition);
+                    }
+                    break;
+                }
+            case 2:
+                {
+                    GetComponent<Units>().Stack(cellToGo.unityOrConstructionOnCell, this);
+                    break;
+                }
+            case 3:
+                {
+
+                    break;
+                }
+
+        }
+
+    }
+
     public void Select()
     {
-        selected = true;
-        ShowAccesibles();
+        if (!selected)
+        {
+            selected = true;
+            ShowAccesibles();
+        }
     }
 
     public void UnSelect()
@@ -54,7 +127,7 @@ public class PlayerMovement : CombatStats
     {
 
         byte cont = 0;
-        byte pasos;  //pasos que puede realizar
+        byte pasos = GetComponent<Units>().GetMovementsAvailable();  //pasos que puede realizar
         Cell cellActual = GridMap.instance.CellFromWorldPoint(transform.position);
         float size = GridMap.instance.GetCellRadius() * 2;
         findAccesibles(cellActual, cellActual, cont, pasos, size);

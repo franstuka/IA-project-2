@@ -4,13 +4,28 @@ using UnityEngine;
 
 public class CombatManager : MonoBehaviour {
 
+    #region singleton
+    public static CombatManager instance;
+
+    private void Awake()
+    {
+        if (instance != null)
+        {
+            Debug.LogError("More than one instance of grid is trying to active");
+            return;
+        }
+        instance = this;
+        
+    }
+    #endregion
+
     private const float randomincrement = 20;
     private const float advantageincrement = 20;
     private const float cellincrement = 20;
     private const float generalincrement = 50;
     private const byte generalrange = 3;
 
-    void combat(CombatStats attacker, CombatStats defender)
+    public void combat(CombatStats attacker, CombatStats defender)
     {
         float totaldamageA = 0;
         float totaldamageD = 0;

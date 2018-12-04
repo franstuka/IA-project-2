@@ -17,9 +17,25 @@ public class Structures : CombatStats {
         float force;
         float maxDamage;
         byte turn;
+
+
+        public unitData(string unit, byte tier, float maxForce, float force, float maxDamage, byte turn)
+        {
+            this.unit = unit;
+            this.tier = tier;
+            this.maxForce = maxForce;
+            this.force = force;
+            this.maxDamage = maxDamage;
+            this.turn = turn;
+        }
     }
 
-    private LinkedList<unitData> units;
+    [SerializeField] private GameObject peon;
+    [SerializeField] private GameObject caballero;
+    [SerializeField] private GameObject lancero;
+    [SerializeField] private GameObject general;
+
+    [SerializeField] private LinkedList<unitData> units;
 
 
     // Use this for initialization
@@ -51,43 +67,68 @@ public class Structures : CombatStats {
 
     }
 
-    void CreateUnit(UnitType type, CombatStats torre)
+    public void SaveUnit(CombatStats unit)
+    {
+        unitData data = new unitData(unit.GetComponentInParent<GameObject>().name , unit.GetTier(), unit.GetMaxForce(), unit.GetForce(), unit.GetMaxDamage(), 0);
+        units.AddLast(data);
+    }
+
+    public void CreateUnit(UnitType type, CombatStats torre)
     {
         if (slots <= maxSlots)
         {
             byte goldToSubstract = 0;
-            GameObject piece = new GameObject();
+            GameObject piece = null;
+            byte turns = 0;
+            unitData data;
 
             switch (type)
             {
                 case UnitType.Peon:
                     goldToSubstract = UnitCost[0];
-                    piece = GameObject.Find("Peon");                   
+                    piece = peon;
+                    turns = 1;
                     break;
 
                 case UnitType.Lancero:
                     goldToSubstract = UnitCost[1];
-                    piece = GameObject.Find("Lancero");
+                    piece = lancero;
+                    turns = 2;
                     break;
 
                 case UnitType.Caballeria:
                     goldToSubstract = UnitCost[2];
-                    piece = GameObject.Find("Caballeria");
+                    piece = caballero;
+                    turns = 2;
                     break;
 
                 case UnitType.General:
                     goldToSubstract = UnitCost[3];
-                    piece = GameObject.Find("General");
-                    break;             
-            }
+                    piece = general;
+                    turns = 3;
+                    break;
 
-            if (GameManager.instance.GetPlayersGold(GameManager.instance.GetTurn()) - goldToSubstract >= 0)
+                default:
+                    break;
+            }
+            if (piece)
             {
-                GameManager.instance.ChangeGold(goldToSubstract);
-                slots++;
-                Vector2Int posTorre = GridMap.instance.CellCordFromWorldPoint(torre.transform.position);
-                Instantiate(piece, new Vector3 (posTorre.x, posTorre.y, 0) , Quaternion.identity);                              
-            }                                    
+                if (GameManager.instance.GetPlayersGold(GameManager.instance.GetTurn()) - goldToSubstract >= 0)
+                {
+                    GameManager.instance.ChangeGold(goldToSubstract);
+                    slots++;
+
+                    data = new unitData(piece.name, piece.GetComponent<CombatStats>().GetTier(), piece.GetComponent<CombatStats>().GetMaxForce(), piece.GetComponent<CombatStats>().GetForce(), piece.GetComponent<CombatStats>().GetMaxDamage(), turns);
+
+                    /*Vector2Int posTorre = GridMap.instance.CellCordFromWorldPoint(torre.transform.position);
+                    Instantiate(piece, new Vector3 (posTorre.x, posTorre.y, 0) , Quaternion.identity);*/
+                }
+            }
         }                                            
+    }
+
+    public void SpawnUnit(Vector2Int pos)
+    {
+
     }
 }

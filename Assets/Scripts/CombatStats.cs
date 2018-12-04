@@ -13,7 +13,7 @@ public class CombatStats : MonoBehaviour {
     [SerializeField] private float MaxForce = 0;
     [SerializeField] private float MaxDamage = 0;
     [SerializeField] private float Damage;
-    [SerializeField] public UnitType Type;
+    [SerializeField] private UnitType Type;
 
     private byte team;
 
@@ -32,7 +32,7 @@ public class CombatStats : MonoBehaviour {
 
     public UnitType GetUnityType()
     {
-        return UnitType.Caballeria;
+        return Type;
     }
 
     public byte GetTeam()
@@ -143,7 +143,9 @@ public class CombatStats : MonoBehaviour {
 
     public virtual void Die()
     {
-
+        Vector2Int aux = GridMap.instance.CellCordFromWorldPoint(transform.position);
+        GridMap.instance.grid[aux.x, aux.y].unityOrConstructionOnCell = null;
+        Destroy(this.GetComponent<GameObject>());
     }
 
     public byte GetTier()

@@ -22,7 +22,7 @@ public class Units : CombatStats {
 
     void SetMaxMovements()
     {
-        switch (Type)
+        switch (GetUnityType())
         {
             case UnitType.Caballeria:
                 maxMovementsAvailable = 4;
@@ -74,7 +74,7 @@ public class Units : CombatStats {
         firstUnit.ChangeStats(CombatStatsType.MAXDAMAGE, (firstUnit.GetMaxDamage() * 2 * damageIncrement));
     }
 
-    void Stack(CombatStats firstUnit, CombatStats secondUnit)
+    public void Stack(CombatStats firstUnit, CombatStats secondUnit)
     {
         if (firstUnit.GetTier() < 2 || firstUnit.GetTier() != secondUnit.GetTier())
         {
@@ -89,6 +89,5 @@ public class Units : CombatStats {
 
       
     }
-
 
 }
