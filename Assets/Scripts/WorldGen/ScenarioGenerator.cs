@@ -94,7 +94,6 @@ public class ScenarioGenerator : MonoBehaviour {
     private Texture2D CreateNewNoiseTexture(ref int numCellsX, ref int numCellsY, ref float cellRadius, float localNoiseScale, int localTextureResolution, int seed) //Get Noise texture
     {
         Texture2D newTexture = new Texture2D(numCellsX * localTextureResolution, numCellsY * localTextureResolution);
-        Debug.Log("Resolution = " + numCellsX * localTextureResolution + " , " + numCellsY * localTextureResolution);
         for (int x = 0; x < numCellsX * localTextureResolution; x++)
         {
             for (int y = 0; y < numCellsY * localTextureResolution; y++)
@@ -111,7 +110,6 @@ public class ScenarioGenerator : MonoBehaviour {
     private Texture2D CreateNewNoiseForSecundaryAlbedo(ref int numCellsX, ref int numCellsY, ref float cellRadius, float localNoiseScale, int localTextureResolution, int seed) //Get Noise texture
     {
         Texture2D newTexture = new Texture2D(numCellsX * localTextureResolution, numCellsY * localTextureResolution);
-        Debug.Log("Resolution = " + numCellsX * localTextureResolution + " , " + numCellsY * localTextureResolution);
         for (int x = 0; x < numCellsX * localTextureResolution; x++)
         {
             for (int y = 0; y < numCellsY * localTextureResolution; y++)
@@ -241,7 +239,7 @@ public class ScenarioGenerator : MonoBehaviour {
         int mayorAxis = numCellsX > numCellsY ? numCellsX : numCellsY;
         bool mayorAxisIsX = numCellsX > numCellsY ? true : false;
         byte[,] minesMatrix = new byte[numCellsX,numCellsY]; //code: 0 free, 1 invalid, 2 with mine
-        List<Vector2Int> minesPosition = new List<Vector2Int>();
+        List<Vector2Int> minesPosition = new List<Vector2Int>(9); //mines number, 2 in each side, 5 in center
 
         #region delete borders
 
@@ -389,12 +387,280 @@ public class ScenarioGenerator : MonoBehaviour {
                 }
             }
         }
-        
-        return true;
 
         #endregion
+
+        #region SetMines in position
+
+        Vector2Int savedPosition = new Vector2Int(-1,-1);
+        float maxValue = 0f;
+        bool end = false;
+
+        //first zone
+
+        if (mayorAxisIsX)
+        {
+            while (!end)
+            {
+                maxValue = 0f;
+                savedPosition.Set(-1, -1);
+                for (int i = 0; i < Mathf.CeilToInt(numCellsX * MidDivision) && !end; i++)
+                {
+                    for (int j = 0; j < numCellsY && !end; j++)
+                    {
+                        if (noiseLayer.GetPixel(i, j).grayscale >= maxValue && minesMatrix[i, j] == 0 && GridMap.instance.grid[i,j].CellType != CellTypes.MOUNTAINS)
+                        {
+                            maxValue = noiseLayer.GetPixel(i, j).grayscale;
+                            savedPosition.Set(i, j);
+                        }
+                    }
+                }
+                if (savedPosition == new Vector2Int(-1, -1))
+                {
+                    Debug.LogError("Not valid mine position found");
+                }
+                else
+                {
+                    SetBannedPositionAroundMines(savedPosition, ref numCellsX, ref numCellsY, ref minesMatrix, ref finalTexture);
+                    minesMatrix[savedPosition.x, savedPosition.y] = 2;
+                    minesPosition.Add(new Vector2Int(savedPosition.x, savedPosition.y));
+                    if (minesPosition.Count >= 2)
+                    {
+                        end = true;
+                    }
+                }
+               
+            }
+        }
+        else
+        {
+            while (!end)
+            {
+                maxValue = 0f;
+                savedPosition.Set(-1, -1);
+                for (int i = 0; i < numCellsX && !end; i++)
+                {
+                    for (int j = 0; j < Mathf.CeilToInt(numCellsY * MidDivision) && !end; j++)
+                    {
+                        if (noiseLayer.GetPixel(i, j).grayscale >= maxValue && minesMatrix[i, j] == 0 && GridMap.instance.grid[i, j].CellType != CellTypes.MOUNTAINS)
+                        {
+                            maxValue = noiseLayer.GetPixel(i, j).grayscale;
+                            savedPosition.Set(i, j);
+                        }
+                    }
+                }
+                if (savedPosition == new Vector2Int(-1, -1))
+                {
+                    Debug.LogError("Not valid mine position found");
+                }
+                else
+                {
+                    SetBannedPositionAroundMines(savedPosition, ref numCellsX, ref numCellsY, ref minesMatrix, ref finalTexture);
+                    minesMatrix[savedPosition.x, savedPosition.y] = 2;
+                    minesPosition.Add(new Vector2Int(savedPosition.x, savedPosition.y));
+                    if (minesPosition.Count >= 2)
+                    {
+                        end = true;
+                    }
+                }
+            }
+        }
+
+        //third zone
+        end = false;
+        if (mayorAxisIsX)
+        {
+            while (!end)
+            {
+                maxValue = 0f;
+                savedPosition.Set(-1, -1);
+                for (int i = Mathf.CeilToInt(numCellsX * (1f - MidDivision)); i < numCellsX && !end; i++)
+                {
+                    for (int j = 0; j < numCellsY && !end; j++)
+                    {
+                        if (noiseLayer.GetPixel(i, j).grayscale >= maxValue && minesMatrix[i, j] == 0 && GridMap.instance.grid[i, j].CellType != CellTypes.MOUNTAINS)
+                        {
+                            maxValue = noiseLayer.GetPixel(i, j).grayscale;
+                            savedPosition.Set(i, j);
+                        }
+                    }
+                }
+                if (savedPosition == new Vector2Int(-1, -1))
+                {
+                    Debug.LogError("Not valid mine position found");
+                }
+                else
+                {
+                    SetBannedPositionAroundMines(savedPosition, ref numCellsX, ref numCellsY, ref minesMatrix, ref finalTexture);
+                    minesMatrix[savedPosition.x, savedPosition.y] = 2;
+                    minesPosition.Add(new Vector2Int(savedPosition.x, savedPosition.y));
+                    if (minesPosition.Count >= 4)
+                    {
+                        end = true;
+                    }
+                }
+
+            }
+        }
+        else
+        {
+            while (!end)
+            {
+                maxValue = 0f;
+                savedPosition.Set(-1, -1);
+                for (int i = 0; i < numCellsX && !end; i++)
+                {
+                    for (int j = Mathf.CeilToInt(numCellsY * (1f - MidDivision)); j < numCellsY && !end; j++)
+                    {
+                        if (noiseLayer.GetPixel(i, j).grayscale >= maxValue && minesMatrix[i, j] == 0 && GridMap.instance.grid[i, j].CellType != CellTypes.MOUNTAINS)
+                        {
+                            maxValue = noiseLayer.GetPixel(i, j).grayscale;
+                            savedPosition.Set(i, j);
+                        }
+                    }
+                }
+                if (savedPosition == new Vector2Int(-1, -1))
+                {
+                    Debug.LogError("Not valid mine position found");
+                }
+                else
+                {
+                    SetBannedPositionAroundMines(savedPosition, ref numCellsX, ref numCellsY, ref minesMatrix, ref finalTexture);
+                    minesMatrix[savedPosition.x, savedPosition.y] = 2;
+                    minesPosition.Add(new Vector2Int(savedPosition.x, savedPosition.y));
+                    if (minesPosition.Count >= 4)
+                    {
+                        end = true;
+                    }
+                }
+            }
+        }
+
+        //mid zone
+        end = false;
+        if (mayorAxisIsX)
+        {
+            while (!end)
+            {
+                maxValue = 0f;
+                savedPosition.Set(-1, -1);
+                for (int i = Mathf.CeilToInt(numCellsX * MidDivision) ; i < Mathf.CeilToInt(numCellsX * (1f - MidDivision)) && !end; i++)
+                {
+                    for (int j = 0; j < numCellsY && !end; j++)
+                    {
+                        if (noiseLayer.GetPixel(i, j).grayscale >= maxValue && minesMatrix[i, j] == 0 && GridMap.instance.grid[i, j].CellType != CellTypes.MOUNTAINS) 
+                        {
+                            maxValue = noiseLayer.GetPixel(i, j).grayscale;
+                            savedPosition.Set(i, j);
+                        }
+                    }
+                }
+                if (savedPosition == new Vector2Int(-1, -1))
+                {
+                    Debug.LogError("Not valid mine position found");
+                }
+                else
+                {
+                    SetBannedPositionAroundMines(savedPosition, ref numCellsX, ref numCellsY, ref minesMatrix, ref finalTexture);
+                    minesMatrix[savedPosition.x, savedPosition.y] = 2;
+                    minesPosition.Add(new Vector2Int(savedPosition.x, savedPosition.y));
+                    if (minesPosition.Count >= 9)
+                    {
+                        end = true;
+                    }
+                }
+
+            }
+        }
+        else
+        {
+            while (!end)
+            {
+                maxValue = 0f;
+                savedPosition.Set(-1, -1);
+                for (int i = 0; i < numCellsX && !end; i++)
+                {
+                    for (int j = Mathf.CeilToInt(numCellsY * MidDivision); j < Mathf.CeilToInt(numCellsY * (1f - MidDivision)) && !end; j++)
+                    {
+                        if (noiseLayer.GetPixel(i, j).grayscale >= maxValue && minesMatrix[i, j] == 0 && GridMap.instance.grid[i, j].CellType != CellTypes.MOUNTAINS)
+                        {
+                            maxValue = noiseLayer.GetPixel(i, j).grayscale;
+                            savedPosition.Set(i, j);
+                        }
+                    }
+                }
+                if (savedPosition == new Vector2Int(-1, -1))
+                {
+                    Debug.LogError("Not valid mine position found");
+                }
+                else
+                {
+                    SetBannedPositionAroundMines(savedPosition, ref numCellsX, ref numCellsY, ref minesMatrix, ref finalTexture);
+                    minesMatrix[savedPosition.x, savedPosition.y] = 2;
+                    minesPosition.Add(new Vector2Int(savedPosition.x, savedPosition.y));
+                    if (minesPosition.Count >= 9)
+                    {
+                        end = true;
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region Draw mines and expand near
+        Debug.Log(minesPosition.Count);
+        Vector2Int newMineValue;
+        for (int i = 0; i < minesPosition.Count; i++)
+        {
+            newMineValue = FindMaximunValueAroundMine(minesPosition[i], ref numCellsX, ref numCellsY, ref noiseLayer);
+            finalTexture.SetPixel(newMineValue.x, newMineValue.y, MinesColor);
+            finalTexture.SetPixel(minesPosition[i].x, minesPosition[i].y, MinesColor);
+            GridMap.instance.grid[newMineValue.x, newMineValue.y].CellType = CellTypes.MINE;
+            GridMap.instance.grid[minesPosition[i].x, minesPosition[i].y].CellType = CellTypes.MINE;
+        }
+
+        #endregion
+
+        return true;
     }
 
+    private void SetBannedPositionAroundMines(Vector2Int centerPosition, ref int numCellsX, ref int numCellsY, ref byte[,] minesMatrix, ref Texture2D finalTexture)
+    {
+        for (int i = centerPosition.x - Mathf.CeilToInt(DistanceBetweenMines * numCellsX) >= 0? centerPosition.x - Mathf.CeilToInt(DistanceBetweenMines * numCellsX): 0 ;
+            i < numCellsX && i <= centerPosition.x + Mathf.CeilToInt(DistanceBetweenMines * numCellsX); i++)
+        {
+            for (int j = centerPosition.y - Mathf.CeilToInt(DistanceBetweenMines * numCellsY) >= 0 ? centerPosition.y - Mathf.CeilToInt(DistanceBetweenMines * numCellsY) : 0;
+                j < numCellsY && j <= centerPosition.y + Mathf.CeilToInt(DistanceBetweenMines * numCellsY); j++)
+            {
+                if (minesMatrix[i, j] == 0)
+                {
+                    minesMatrix[i, j] = 1;
+                    if (SeeBlockedGoldZone)
+                        finalTexture.SetPixel(i, j, BlockedGoldColor);
+                }
+            }
+        }
+    }
+
+    private Vector2Int FindMaximunValueAroundMine(Vector2Int centerPosition, ref int numCellsX, ref int numCellsY, ref Texture2D noiseLayer)
+    {
+        float max = 0f;
+        Vector2Int pos = new Vector2Int(-1,-1);
+        for (int i = centerPosition.x - 1; i < numCellsX &&  i <= centerPosition.x + 1; i++)
+        {
+            for (int j = centerPosition.y - 1; j < numCellsY && j <= centerPosition.y + 1; j++)
+            {
+                if(max < noiseLayer.GetPixel(i,j).grayscale && !(i == centerPosition.x && j == centerPosition.y))
+                {
+                    max = noiseLayer.GetPixel(i, j).grayscale;
+                    pos = new Vector2Int(i, j);
+                }
+            }
+        }
+        return pos;
+    }
+    
     private int GetManhattanDistance(Vector2Int from,Vector2Int to)
     {  
         return Mathf.Abs(to.x - from.x) + Mathf.Abs(to.y - from.x);
