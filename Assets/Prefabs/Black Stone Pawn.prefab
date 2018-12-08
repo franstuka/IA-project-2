@@ -615,6 +615,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nav: {fileID: 0}
   selected: 0
+  area: {fileID: 1445762561626958, guid: 36d44f68310271742b31c36bd54efe24, type: 2}
 --- !u!114 &114953768438566838
 MonoBehaviour:
   m_ObjectHideFlags: 1

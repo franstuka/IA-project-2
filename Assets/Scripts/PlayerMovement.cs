@@ -8,12 +8,17 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] Navegation nav;
     [SerializeField] bool selected = false;
 
+    [SerializeField] GameObject area;
+
     private LinkedList<Cell> adyacents;
+    private LinkedList<GameObject> areas;
     private bool moving = false;
 
     private void Awake()
     {
         adyacents = new LinkedList<Cell>();
+        areas = new LinkedList<GameObject>();
+        //area.transform.localScale = new Vector3(GridMap.instance.GetCellRadius() * 2, 0, GridMap.instance.GetCellRadius() * 2);
     }
 
     private void Start()
@@ -171,6 +176,12 @@ public class PlayerMovement : MonoBehaviour
         GetComponent<Units>().SetMovementsAvailable(0);
         selected = false;
         adyacents.Clear();
+        while(areas.Count>0)
+        {
+            Destroy(areas.First.Value);
+            areas.RemoveFirst();
+        }
+
     }
 
     public void ShowAccesibles()
@@ -179,11 +190,29 @@ public class PlayerMovement : MonoBehaviour
         byte pasos = GetComponent<Units>().GetMovementsAvailable();
         Cell cellActual = GridMap.instance.CellFromWorldPoint(transform.position);
         float size = GridMap.instance.GetCellRadius() * 2;
-        findAccesibles(cellActual, cont, pasos, size);
-
+        FindAccesibles(cellActual, cont, pasos, size);
+        ShowAreaAccesibles();
     }
 
-    private void findAccesibles(Cell cell,  int cont, byte pasos, float size) 
+    private void ShowAreaAccesibles()
+    {
+        for (LinkedListNode<Cell> cell = adyacents.First; cell != null; cell = cell.Next)
+        {
+            Vector3 aux = new Vector3(cell.Value.GlobalPosition.x, cell.Value.GlobalPosition.y, cell.Value.GlobalPosition.z);
+            GameObject aux2 = Instantiate(area, aux, Quaternion.identity);
+            areas.AddLast(aux2);
+            //GameObject aux2 = area;
+            //aux2.transform.position = aux;
+            //areas.AddLast(aux2);
+            //Instantiate(aux2, aux2.transform);
+        }
+        /*Debug.Log(adyacents.Count);
+        Vector3 aux = transform.position;
+        GameObject aux2 = Instantiate(area, aux, Quaternion.identity);*/
+       // aux2.transform.localScale = new Vector3(GridMap.instance.GetCellRadius(), 1, GridMap.instance.GetCellRadius());
+    }
+
+    private void FindAccesibles(Cell cell,  int cont, byte pasos, float size) 
     {
         for (int i = -1; i < 2; i++)
         {
@@ -201,7 +230,7 @@ public class PlayerMovement : MonoBehaviour
                             adyacents.AddLast(cellAux);
                         }
 
-                        findAccesibles(cellAux,  (cont + cellAux.GetMovementCost()), pasos, size);
+                        FindAccesibles(cellAux,  (cont + cellAux.GetMovementCost()), pasos, size);
                     }
                // }
             }
