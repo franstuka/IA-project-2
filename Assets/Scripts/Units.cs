@@ -24,14 +24,14 @@ public class Units : CombatStats {
         switch (GetUnityType())
         {
             case UnitType.Caballeria:
-                maxMovementsAvailable = 4;
+                maxMovementsAvailable = 5;
                 break;
             case UnitType.General:
                 maxMovementsAvailable = 3;
                 break;
             case UnitType.Lancero:
             case UnitType.Peon:
-                maxMovementsAvailable = 2;
+                maxMovementsAvailable = 3;
                 break;
         }
     }

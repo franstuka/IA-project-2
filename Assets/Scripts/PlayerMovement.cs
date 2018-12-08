@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] bool selected = false;
 
     private LinkedList<Cell> adyacents;
+    private bool moving = false;
 
     private void Awake()
     {
@@ -22,9 +23,9 @@ public class PlayerMovement : MonoBehaviour
 
     // Update is called once per frame
     void Update () {
+        //Debug.Log(moving);
 
-
-        if (selected)
+        if (selected && moving != true)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -69,7 +70,6 @@ public class PlayerMovement : MonoBehaviour
                             }
 
                             //Debug.Log((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
-                            GetComponent<Units>().SetMovementsAvailable((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
 
                             if (cellAux.unityOrConstructionOnCell.GetUnityType() == GetComponent<CombatStats>().GetUnityType())
                             {
@@ -87,7 +87,11 @@ public class PlayerMovement : MonoBehaviour
                         }
 
                         Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(transform.position);
-                        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
+                        
+                        if (cellAux != GridMap.instance.CellFromWorldPoint(transform.position))
+                        {
+                            GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
+                        }
 
                         nav.SetDestinationPlayer(cellAux.GlobalPosition);
                     }
@@ -104,6 +108,9 @@ public class PlayerMovement : MonoBehaviour
 
     IEnumerator WaitUnitilStoped(Cell cellToGo, byte action)
     {
+        moving = true;
+        //Debug.Log(nav.GetStopped());
+        yield return new WaitForSeconds(0.1f);
         yield return new WaitUntil(()=>nav.GetStopped());
 
         switch (action)
@@ -122,7 +129,12 @@ public class PlayerMovement : MonoBehaviour
             case 2:
                 {
                     Debug.Log("Stack");
-                    GetComponent<Units>().Stack(GetComponent<CombatStats>(), cellToGo.unityOrConstructionOnCell);
+
+                    if (this.GetComponent<CombatStats>() != cellToGo.unityOrConstructionOnCell) 
+                    {
+                        Debug.Log("Stack2");
+                        GetComponent<Units>().Stack(GetComponent<CombatStats>(), cellToGo.unityOrConstructionOnCell);
+                    }
                     break;
                 }
             case 3:
@@ -135,7 +147,7 @@ public class PlayerMovement : MonoBehaviour
 
         Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(cellToGo.GlobalPosition);
         GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = GetComponent<CombatStats>();
-
+        moving = false;
     }
 
     public bool GetSelected()
@@ -146,8 +158,7 @@ public class PlayerMovement : MonoBehaviour
     public void Select()
     {
         if (!selected)
-        {
-            
+        { 
             selected = true;
             ShowAccesibles();
         }
@@ -155,6 +166,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void UnSelect()
     {
+        GetComponent<Units>().SetMovementsAvailable(0);
         selected = false;
         adyacents.Clear();
     }
@@ -165,11 +177,11 @@ public class PlayerMovement : MonoBehaviour
         byte pasos = GetComponent<Units>().GetMovementsAvailable();
         Cell cellActual = GridMap.instance.CellFromWorldPoint(transform.position);
         float size = GridMap.instance.GetCellRadius() * 2;
-        findAccesibles(cellActual, cellActual, cont, pasos, size);
+        findAccesibles(cellActual, cont, pasos, size);
 
     }
 
-    private void findAccesibles(Cell cell, Cell cellActual, int cont, byte pasos, float size) 
+    private void findAccesibles(Cell cell,  int cont, byte pasos, float size) 
     {
         for (int i = -1; i < 2; i++)
         {
@@ -180,14 +192,14 @@ public class PlayerMovement : MonoBehaviour
                     Cell cellAux = GridMap.instance.CellFromWorldPoint(new Vector3(cell.GlobalPosition.x + i * size, cell.GlobalPosition.y, cell.GlobalPosition.z + j * size));
 
                     //Debug.Log(GridMap.instance.CellCordFromWorldPoint(cellAux.GlobalPosition));
-                    if (cellAux != cellActual && (cont + cellAux.GetMovementCost()) <=pasos)
+                    if ((cont + cellAux.GetMovementCost()) <=pasos)
                     {
                         if (!adyacents.Contains(cellAux))
                         {
                             adyacents.AddLast(cellAux);
                         }
 
-                        findAccesibles(cellAux, cellActual, (cont + cellAux.GetMovementCost()), pasos, size);
+                        findAccesibles(cellAux,  (cont + cellAux.GetMovementCost()), pasos, size);
                     }
                // }
             }

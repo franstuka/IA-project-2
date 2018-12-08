@@ -25,10 +25,12 @@ public class GameManager : MonoBehaviour {
         playersGold = new int[playersNum];
 
         ///////////////////// 
+        int name = 0;
 
         Vector3 posicion = GridMap.instance.grid[1, 0].GlobalPosition;
         GameObject Peon = Instantiate(peon, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
-
+        Peon.name = "Peon" + name;
+        name++;
         units[1].AddLast(Peon);
 
         Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(Peon.transform.position);
@@ -36,7 +38,7 @@ public class GameManager : MonoBehaviour {
 
         Vector3 posicion2 = GridMap.instance.grid[1, 1].GlobalPosition;
         GameObject Peon2 = Instantiate(peon, new Vector3(posicion2.x, 1, posicion2.z), Quaternion.identity);
-
+        Peon2.name = "Peon" + name;
         units[1].AddLast(Peon2);
 
         Vector2Int coord2 = GridMap.instance.CellCordFromWorldPoint(Peon2.transform.position);

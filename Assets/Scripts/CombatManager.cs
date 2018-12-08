@@ -163,6 +163,7 @@ public class CombatManager : MonoBehaviour {
 
                             case CombatStats.UnitType.Lancero:
                             {
+                                Debug.Log("Hola");
                                 totaldamageA += attacker.GetDamage() * (advantageincrement / 2) / 100;
                                 break;
 
@@ -261,6 +262,7 @@ public class CombatManager : MonoBehaviour {
 
         }
 
+        Debug.Log(GeneralInRange(attacker));
         if (GeneralInRange(attacker))
         {
             totaldamageA += Mathf.FloorToInt((attacker.GetDamage() * generalincrement / 100));
@@ -281,16 +283,17 @@ public class CombatManager : MonoBehaviour {
     {
         Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(attacker.transform.position);
 
-        for (int i = 0; i < generalrange * 2; i++)
+        for (int i = -generalrange ; i <= generalrange; i++)
         {
-            for (int j = 0; j < generalrange * 2; j++)
+            for (int j = -generalrange; j <= generalrange ; j++)
             {
 
-                if ((0 <= (coord.x - generalrange + i) && (coord.x - generalrange + i) < GridMap.instance.GetGridSizeX())
-                    && 0 <= (coord.y - generalrange + i) && (coord.y - generalrange + i) < GridMap.instance.GetGridSizeY()) 
+                if ((0 <= (coord.x + i) && (coord.x + i) < GridMap.instance.GetGridSizeX())
+                    && 0 <= (coord.y + j) && (coord.y + j) < GridMap.instance.GetGridSizeY()
+                    && (i != 0) && (j != 0)) 
                 {
-                    //Debug.Log(GridMap.instance.grid[coord.x - generalrange + i, coord.y + generalrange + j].unityOrConstructionOnCell == null);
-                    if (GridMap.instance.grid[coord.x - generalrange + i, coord.y + generalrange + j].unityOrConstructionOnCell && GridMap.instance.grid[coord.x - generalrange + i, coord.y + generalrange + j].unityOrConstructionOnCell.GetComponent<CombatStats>().GetUnityType() == CombatStats.UnitType.General)
+                    Debug.Log(GridMap.instance.grid[coord.x + i, coord.y + j].unityOrConstructionOnCell == null);
+                    if (GridMap.instance.grid[coord.x + i, coord.y + j].unityOrConstructionOnCell && GridMap.instance.grid[coord.x + i, coord.y + j].unityOrConstructionOnCell.GetComponent<CombatStats>().GetUnityType() == CombatStats.UnitType.General && GridMap.instance.grid[coord.x + i, coord.y + j].unityOrConstructionOnCell.GetComponent<CombatStats>().GetTeam() == attacker.GetTeam()) 
                     {
                      return true;
                     }
@@ -300,38 +303,6 @@ public class CombatManager : MonoBehaviour {
         return false;
      }
 
-
-    //private bool GeneralInRange(CombatStats attacker)
-    //{
-    //    Vector2 attackerpos = GridMap.instance.CellCordFromWorldPoint(attacker.transform.position);
-    //    byte team = GameManager.instance.GetTurn();
-    
-    //    List<LinkedList<GameObject>> units = GameManager.instance.GetUnitList();
-
-    //    LinkedListNode<GameObject> unit; 
-
-    //    for (unit = units[team].First; unit != null; unit = unit.Next)
-    //    {
-
-    //        if (unit.Value.GetComponent<CombatStats>().GetUnityType() == CombatStats.UnitType.General)
-    //        {
-    //            Vector2 generalpos = GridMap.instance.CellCordFromWorldPoint(unit.Value.transform.position);
-
-    //            if (Mathf.Abs(generalpos[0] - attackerpos[0] ) <= generalrange && Mathf.Abs(generalpos[1] - attackerpos[1]) <= generalrange)
-    //            {
-    //                return true;
-    //            }
-
-    //        }
-
-    //        unit = unit.Next;
-
-    //    }
-
-    //    return false;
-
-
-    //}
     private void attackUnity(CombatStats defender, float totaldamage)
     {
             defender.SetAttack(totaldamage);        

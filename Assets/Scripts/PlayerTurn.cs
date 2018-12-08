@@ -12,7 +12,7 @@ public class PlayerTurn : MonoBehaviour {
     {
         playerTurn = GameManager.instance.GetTurn();
     }
-    void Update()
+    void LateUpdate()
     {
         if (!selected)
         {
