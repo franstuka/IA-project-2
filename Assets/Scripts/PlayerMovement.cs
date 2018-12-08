@@ -175,12 +175,12 @@ public class PlayerMovement : MonoBehaviour
         {
             for (int j = -1; j < 2; j++)
             {
-                if (i >= 0 && j >= 0 ) {         // te sales?
+                //if ((cell.GlobalPosition.x + i * size > 0 && cell.GlobalPosition.x + i * size < GridMap.instance.GetGridSize().x) && (cell.GlobalPosition.y + j * size > 0 && cell.GlobalPosition.y + j * size < GridMap.instance.GetGridSize().y)) {         // te sales?
 
                     Cell cellAux = GridMap.instance.CellFromWorldPoint(new Vector3(cell.GlobalPosition.x + i * size, cell.GlobalPosition.y, cell.GlobalPosition.z + j * size));
 
                     //Debug.Log(GridMap.instance.CellCordFromWorldPoint(cellAux.GlobalPosition));
-                    if (cellAux != cellActual && (cont + cellAux.GetMovementCost()) < pasos)
+                    if (cellAux != cellActual && (cont + cellAux.GetMovementCost()) <=pasos)
                     {
                         if (!adyacents.Contains(cellAux))
                         {
@@ -189,7 +189,7 @@ public class PlayerMovement : MonoBehaviour
 
                         findAccesibles(cellAux, cellActual, (cont + cellAux.GetMovementCost()), pasos, size);
                     }
-                }
+               // }
             }
         }
 
