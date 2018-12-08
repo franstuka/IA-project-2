@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : CombatStats
+public class PlayerMovement : Units
 {
 
     [SerializeField] Navegation nav;
     [SerializeField] bool selected = false;
 
     private LinkedList<Cell> adyacents;
+
+    private void Awake()
+    {
+        adyacents = new LinkedList<Cell>();
+    }
 
     private void Start()
     {
@@ -17,6 +22,7 @@ public class PlayerMovement : CombatStats
 
     // Update is called once per frame
     void Update () {
+
 
         if (selected)
         {
@@ -28,21 +34,22 @@ public class PlayerMovement : CombatStats
                 if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~13)) //layer 13 click detection
                 {
                     Cell cellAux = GridMap.instance.CellFromWorldPoint(hit.point);
-
+                    //Debug.Log(adyacents.Contains(cellAux));
                     if (adyacents.Contains(cellAux)) {
                         if (cellAux.unityOrConstructionOnCell && (cellAux.unityOrConstructionOnCell.GetTeam() != GetTeam() || cellAux.unityOrConstructionOnCell.GetUnityType() != GetUnityType()))
                         {
                             nav.SetDestinationPlayerAndCost(cellAux.GlobalPosition);
                             LinkedList<Vector2Int> aux = nav.GetSavedPath();
                             byte pasos = 0;
-                            for (LinkedListNode<Vector2Int> auxNode = aux.First; auxNode.Value != null; auxNode = auxNode.Next)
+                            for (LinkedListNode<Vector2Int> auxNode = aux.First; auxNode != null; auxNode = auxNode.Next)
                             {
-                                pasos += GridMap.instance.grid[auxNode.Value.x, auxNode.Value.y].GetMovementCost();
+                                pasos += GridMap.instance.grid[auxNode.Value.x, auxNode.Value.y].GetMovementCost(); 
                             }
 
-                            GetComponent<Units>().SetMovementsAvailable( (byte)(GetComponent<Units>().GetMovementsAvailable() - pasos) );
+                            GetComponent<Units>().SetMovementsAvailable((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
 
                             aux.RemoveLast();
+
                             if (cellAux.unityOrConstructionOnCell.GetTeam() != GetTeam())
                             {
                                 StartCoroutine(WaitUnitilStoped(cellAux, 1));
@@ -53,12 +60,14 @@ public class PlayerMovement : CombatStats
                             nav.SetDestinationPlayerAndCost(cellAux.GlobalPosition);
                             LinkedList<Vector2Int> aux = nav.GetSavedPath();
                             byte pasos = 0;
-                            for (LinkedListNode<Vector2Int> auxNode = aux.First; auxNode.Value != null; auxNode = auxNode.Next)
+                            for (LinkedListNode<Vector2Int> auxNode = aux.First; auxNode.Value == null; auxNode = auxNode.Next)
                             {
+                                Debug.Log(GridMap.instance.grid[auxNode.Value.x, auxNode.Value.y].GetMovementCost());
                                 pasos += GridMap.instance.grid[auxNode.Value.x, auxNode.Value.y].GetMovementCost();
                             }
 
-                            GetComponent<Units>().SetMovementsAvailable((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
+                            //Debug.Log((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
+                            SetMovementsAvailable((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
 
                             if (cellAux.unityOrConstructionOnCell.GetUnityType() == this.GetUnityType())
                             {
@@ -69,9 +78,19 @@ public class PlayerMovement : CombatStats
                                 StartCoroutine(WaitUnitilStoped(cellAux, 3));
                             }
                         }
-                        nav.SetDestinationPlayerAndCost(cellAux.GlobalPosition);
+
+                        StartCoroutine(WaitUnitilStoped(cellAux, 0));
+                        Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(transform.position);
+                        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
+
+                        nav.SetDestinationPlayer(cellAux.GlobalPosition);
                     }
+
+
                     //nav.SetDestinationPlayerAndCost(hit.point); //update movements and move
+
+
+
                 }
             }
         }
@@ -85,6 +104,8 @@ public class PlayerMovement : CombatStats
         {
             case 1:
                 {
+
+                    Debug.Log(cellToGo.unityOrConstructionOnCell.GetTeam());
                     CombatManager.instance.combat(this, cellToGo.unityOrConstructionOnCell);
 
                     if (!cellToGo.unityOrConstructionOnCell)
@@ -95,7 +116,9 @@ public class PlayerMovement : CombatStats
                 }
             case 2:
                 {
-                    GetComponent<Units>().Stack(cellToGo.unityOrConstructionOnCell, this);
+                  
+                    GetComponent<Units>().Stack(this,cellToGo.unityOrConstructionOnCell);
+
                     break;
                 }
             case 3:
@@ -106,12 +129,21 @@ public class PlayerMovement : CombatStats
 
         }
 
+        Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(cellToGo.GlobalPosition);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = this;
+
+    }
+
+    public bool GetSelected()
+    {
+        return selected;
     }
 
     public void Select()
     {
         if (!selected)
         {
+            //Debug.Log("Entro");
             selected = true;
             ShowAccesibles();
         }
@@ -125,9 +157,8 @@ public class PlayerMovement : CombatStats
 
     public void ShowAccesibles()
     {
-
         byte cont = 0;
-        byte pasos = GetComponent<Units>().GetMovementsAvailable();  //pasos que puede realizar
+        byte pasos = GetMovementsAvailable();
         Cell cellActual = GridMap.instance.CellFromWorldPoint(transform.position);
         float size = GridMap.instance.GetCellRadius() * 2;
         findAccesibles(cellActual, cellActual, cont, pasos, size);
@@ -140,9 +171,11 @@ public class PlayerMovement : CombatStats
         {
             for (int j = -1; j < 2; j++)
             {
-                if (i != 0 && j != 0) { 
+                if (i >= 0 && j >= 0 ) {         // te sales?
+
                     Cell cellAux = GridMap.instance.CellFromWorldPoint(new Vector3(cell.GlobalPosition.x + i * size, cell.GlobalPosition.y, cell.GlobalPosition.z + j * size));
 
+                    //Debug.Log(GridMap.instance.CellCordFromWorldPoint(cellAux.GlobalPosition));
                     if (cellAux != cellActual && (cont + cellAux.GetMovementCost()) < pasos)
                     {
                         if (!adyacents.Contains(cellAux))

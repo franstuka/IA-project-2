@@ -14,8 +14,7 @@ public class CombatStats : MonoBehaviour {
     [SerializeField] private float MaxDamage = 0;
     [SerializeField] private float Damage;
     [SerializeField] private UnitType Type;
-
-    private byte team;
+    [SerializeField] private byte team;
 
     public Animator anim;
     
@@ -26,18 +25,19 @@ public class CombatStats : MonoBehaviour {
 
     private void Awake()
     {
+
         anim = GetComponent<Animator>();
         Damage = MaxDamage;
     }
 
-    public UnitType GetUnityType()
-    {
-        return Type;
-    }
 
     public byte GetTeam()
     {
         return team;
+    }
+    public UnitType GetUnityType()
+    {
+        return Type;
     }
 
     public float GetForce()

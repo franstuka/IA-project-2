@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Units : CombatStats {
-    private byte maxMovementsAvailable;
-    private byte movementsAvailable;
-    private Navegation nav;
+    [SerializeField] private byte maxMovementsAvailable;
+    [SerializeField] private byte movementsAvailable;
     [SerializeField] private float forceIncrement = 0.9f;
     [SerializeField] private float damageIncrement = 0.9f;
 
@@ -38,9 +37,7 @@ public class Units : CombatStats {
     }
 
     // Use this for initialization
-    void Start () {
-        nav = GetComponent<Navegation>();
-    }
+
 	
 	// Update is called once per frame
 	void Update () {
@@ -80,9 +77,13 @@ public class Units : CombatStats {
         {
             List<LinkedList<GameObject>> list = GameManager.instance.GetUnitList();
             byte turn = GameManager.instance.GetTurn();
-            UpdateUnit(firstUnit, secondUnit);
-            list[turn].Remove(list[turn].Find(secondUnit.GetComponent<GameObject>()));
+            UpdateUnit(secondUnit, firstUnit);
+            list[turn].Remove(firstUnit.GetComponent<GameObject>());
             firstUnit.SetTier();
+            Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(secondUnit.transform.position);
+            GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
+            GameObject piece = secondUnit.transform.gameObject;
+            Destroy(piece);
         }
         
         

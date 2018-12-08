@@ -23,16 +23,57 @@ public class GameManager : MonoBehaviour {
             units.Add(new LinkedList<GameObject>());
         }
         playersGold = new int[playersNum];
+
+        ///////////////////// 
+
+        Vector3 posicion = GridMap.instance.grid[0, 0].GlobalPosition;
+        GameObject Peon = Instantiate(peon, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[1].AddLast(Peon);
+
+        Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(Peon.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = Peon.GetComponent<CombatStats>();
+
+        Vector3 posicion2 = GridMap.instance.grid[0, 1].GlobalPosition;
+        GameObject Peon2 = Instantiate(peon, new Vector3(posicion2.x, 1, posicion2.z), Quaternion.identity);
+
+        units[1].AddLast(Peon2);
+
+        Vector2Int coord2 = GridMap.instance.CellCordFromWorldPoint(Peon2.transform.position);
+        GridMap.instance.grid[coord2.x, coord2.y].unityOrConstructionOnCell = Peon2.GetComponent<CombatStats>();
+
+        Vector3 posicion3 = GridMap.instance.grid[1, 0].GlobalPosition;
+        GameObject Peon3 = Instantiate(peonw, new Vector3(posicion3.x, 1, posicion3.z), Quaternion.identity);
+
+        units[0].AddLast(Peon3);
+
+        Vector2Int coord3 = GridMap.instance.CellCordFromWorldPoint(Peon3.transform.position);
+        GridMap.instance.grid[coord3.x, coord3.y].unityOrConstructionOnCell = Peon3.GetComponent<CombatStats>();
+
     }
     #endregion
 
     [SerializeField] private TextMeshProUGUI goldText;
     [SerializeField] private byte playersNum = 2;
     [SerializeField] private int[] playersGold;
-    [SerializeField] private byte turn;
+    [SerializeField] private byte turn = 1;
     [SerializeField] private int initialGold = 500;
     [SerializeField] private int baseGoldWin = 25;
     private List<LinkedList<GameObject>> units;
+
+
+    [SerializeField] private GameObject peon;
+    [SerializeField] private GameObject caballero;
+    [SerializeField] private GameObject lancero;
+    [SerializeField] private GameObject general;
+    [SerializeField] private GameObject torre;
+
+    [SerializeField] private GameObject peonw;
+    [SerializeField] private GameObject caballerow;
+    [SerializeField] private GameObject lancerow;
+    [SerializeField] private GameObject generalw;
+    [SerializeField] private GameObject torrew;
+
 
     private void Start()
     {
@@ -40,12 +81,14 @@ public class GameManager : MonoBehaviour {
         {
             playersGold[i] = initialGold;
         }
+
     }
 
     // Update is called once per frame
     void Update () {        
         //ChangeTurn();        	
 	}
+
 
 
     public void ChangeTurn()
@@ -108,4 +151,5 @@ public class GameManager : MonoBehaviour {
         return units;
     }
 
+    
 }

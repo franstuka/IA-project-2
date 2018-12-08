@@ -275,11 +275,33 @@ public class CombatManager : MonoBehaviour {
         attackUnity(attacker, totaldamageD);
     }
 
+
+    private bool GeneralInRange(CombatStats attacker)
+    {
+        GridMap.instance.CellCordFromWorldPoint(attacker.)
+
+        for (int i = 0; i < generalrange * 2; i++)
+        {
+            for (int j = 0; j < generalrange * 2; j++)
+            {
+                if (0 <= (attacker.x - generalrange + i) <= GridMap.instance.GridSizeX && 0 <= (attacker.y - generalrange + i) <= GridSizeY)
+                {
+                    if (GridMap.instance.grid[attacker.x - generalrange + i, attacker.y + generalrange + j].Type = PieceType.General && Chesspieces[attacker.x - generalrange + i, attacker.y + generalrange + j].team == attacker.team && ((attacker.x - generalrange + i != attacker.x) && (attacker.y + generalrange + j != attacker.y))
+    
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     private bool GeneralInRange(CombatStats attacker)
     {
         Vector2 attackerpos = GridMap.instance.CellCordFromWorldPoint(attacker.transform.position);
         byte team = GameManager.instance.GetTurn();
- 
+    
         List<LinkedList<GameObject>> units = GameManager.instance.GetUnitList();
 
         LinkedListNode<GameObject> unit; 
