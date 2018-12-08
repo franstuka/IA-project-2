@@ -45,6 +45,11 @@ public class CombatStats : MonoBehaviour {
         return Force;
     }
 
+    public void SetAttack(float attack)
+    {
+        Force -= attack;
+    }
+
     public float GetMaxForce()
     {
         return MaxForce;
@@ -57,7 +62,7 @@ public class CombatStats : MonoBehaviour {
 
     public float GetDamage()
     {
-        return MaxDamage * (100 * Force / MaxForce);
+        return MaxDamage * Force / MaxForce;
     }
 
 
@@ -92,7 +97,7 @@ public class CombatStats : MonoBehaviour {
                 {
                     Force += valor;
                 }    
-                if (Force < 0)
+                if (Force <= 0)
                 {
                     Force = 0;
                     Die();
@@ -105,12 +110,19 @@ public class CombatStats : MonoBehaviour {
                 MaxDamage += valor;
                 if (MaxDamage < 0)
                     MaxDamage = 0;
-                break;        
-            /*case 3:
-                Defense += valor;
-                if (Defense < 0)
-                    Defense = 0;
-                break;*/
+                break;
+            case 3:
+                if (valor >= 0)
+                {
+                    Force += valor;
+                }
+                break;
+
+                /*case 3:
+                    Defense += valor;
+                    if (Defense < 0)
+                        Defense = 0;
+                    break;*/
         }
     }
     public virtual void SetStats(CombatStatsType state, float valor)
@@ -145,7 +157,7 @@ public class CombatStats : MonoBehaviour {
     {
         Vector2Int aux = GridMap.instance.CellCordFromWorldPoint(transform.position);
         GridMap.instance.grid[aux.x, aux.y].unityOrConstructionOnCell = null;
-        Destroy(this.GetComponent<GameObject>());
+        Destroy(transform.gameObject);
     }
 
     public byte GetTier()

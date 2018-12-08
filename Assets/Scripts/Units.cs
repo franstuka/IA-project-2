@@ -41,6 +41,8 @@ public class Units : CombatStats {
 	
 	// Update is called once per frame
 	void Update () {
+
+        Debug.Log(GetForce() + " " + name);
 		
 	}    
 
@@ -66,9 +68,9 @@ public class Units : CombatStats {
 
     void UpdateUnit(CombatStats firstUnit, CombatStats secondUnit)
     {
-        firstUnit.ChangeStats(CombatStatsType.MAXFORCE, ((firstUnit.GetMaxForce() * 2) * forceIncrement));
+        firstUnit.ChangeStats(CombatStatsType.MAXFORCE, ((firstUnit.GetMaxForce()) * forceIncrement));
         firstUnit.ChangeStats(CombatStatsType.FORCE, (firstUnit.GetForce() + secondUnit.GetForce()));
-        firstUnit.ChangeStats(CombatStatsType.MAXDAMAGE, (firstUnit.GetMaxDamage() * 2 * damageIncrement));
+        firstUnit.ChangeStats(CombatStatsType.MAXDAMAGE, (firstUnit.GetMaxDamage() * damageIncrement));
     }
 
     public void Stack(CombatStats firstUnit, CombatStats secondUnit)
@@ -77,13 +79,14 @@ public class Units : CombatStats {
         {
             List<LinkedList<GameObject>> list = GameManager.instance.GetUnitList();
             byte turn = GameManager.instance.GetTurn();
-            UpdateUnit(secondUnit, firstUnit);
+            UpdateUnit(firstUnit, secondUnit);
             list[turn].Remove(firstUnit.GetComponent<GameObject>());
             firstUnit.SetTier();
+
+
             Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(secondUnit.transform.position);
             GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
-            GameObject piece = secondUnit.transform.gameObject;
-            Destroy(piece);
+            Destroy(secondUnit.transform.gameObject);
         }
         
         

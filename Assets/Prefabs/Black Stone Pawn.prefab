@@ -74,6 +74,7 @@ GameObject:
   - component: {fileID: 114077510066712082}
   - component: {fileID: 54422585050164294}
   - component: {fileID: 65684112956681686}
+  - component: {fileID: 114953768438566838}
   m_Layer: 0
   m_Name: Black Stone Pawn
   m_TagString: Untagged
@@ -612,6 +613,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b8163429eaf1b44d8bd28bfa47c9ea7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nav: {fileID: 0}
+  selected: 0
+--- !u!114 &114953768438566838
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1437362888727348}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c29eeccb36954f749b4dc84b68ca10c5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   tier: 0
   Force: 50
   MaxForce: 50
@@ -627,5 +641,3 @@ MonoBehaviour:
   movementsAvailable: 5
   forceIncrement: 0.9
   damageIncrement: 0.9
-  nav: {fileID: 0}
-  selected: 0

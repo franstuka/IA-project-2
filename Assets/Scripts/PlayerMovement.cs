@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : Units
+public class PlayerMovement : MonoBehaviour
 {
 
     [SerializeField] Navegation nav;
@@ -36,7 +36,7 @@ public class PlayerMovement : Units
                     Cell cellAux = GridMap.instance.CellFromWorldPoint(hit.point);
                     //Debug.Log(adyacents.Contains(cellAux));
                     if (adyacents.Contains(cellAux)) {
-                        if (cellAux.unityOrConstructionOnCell && (cellAux.unityOrConstructionOnCell.GetTeam() != GetTeam() || cellAux.unityOrConstructionOnCell.GetUnityType() != GetUnityType()))
+                        if (cellAux.unityOrConstructionOnCell && (cellAux.unityOrConstructionOnCell.GetTeam() != GetComponent<CombatStats>().GetTeam() || cellAux.unityOrConstructionOnCell.GetUnityType() != GetComponent<CombatStats>().GetUnityType()))
                         {
                             nav.SetDestinationPlayerAndCost(cellAux.GlobalPosition);
                             LinkedList<Vector2Int> aux = nav.GetSavedPath();
@@ -48,14 +48,16 @@ public class PlayerMovement : Units
 
                             GetComponent<Units>().SetMovementsAvailable((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
 
+                            Debug.Log(aux.Count);
                             aux.RemoveLast();
+                            Debug.Log(aux.Count);
 
-                            if (cellAux.unityOrConstructionOnCell.GetTeam() != GetTeam())
+                            if (cellAux.unityOrConstructionOnCell.GetTeam() != GetComponent<CombatStats>().GetTeam())
                             {
                                 StartCoroutine(WaitUnitilStoped(cellAux, 1));
                             }
                         }
-                        else if (cellAux.unityOrConstructionOnCell && cellAux.unityOrConstructionOnCell.GetTeam() == GetTeam())
+                        else if (cellAux.unityOrConstructionOnCell && cellAux.unityOrConstructionOnCell.GetTeam() == GetComponent<CombatStats>().GetTeam())
                         {
                             nav.SetDestinationPlayerAndCost(cellAux.GlobalPosition);
                             LinkedList<Vector2Int> aux = nav.GetSavedPath();
@@ -67,19 +69,23 @@ public class PlayerMovement : Units
                             }
 
                             //Debug.Log((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
-                            SetMovementsAvailable((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
+                            GetComponent<Units>().SetMovementsAvailable((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
 
-                            if (cellAux.unityOrConstructionOnCell.GetUnityType() == this.GetUnityType())
+                            if (cellAux.unityOrConstructionOnCell.GetUnityType() == GetComponent<CombatStats>().GetUnityType())
                             {
                                 StartCoroutine(WaitUnitilStoped(cellAux, 2));
                             }
-                            else if (cellAux.unityOrConstructionOnCell.GetUnityType() == UnitType.Torre)
+                            else if (cellAux.unityOrConstructionOnCell.GetUnityType() == CombatStats.UnitType.Torre)
                             {
                                 StartCoroutine(WaitUnitilStoped(cellAux, 3));
                             }
                         }
 
-                        StartCoroutine(WaitUnitilStoped(cellAux, 0));
+                        else
+                        {
+                            StartCoroutine(WaitUnitilStoped(cellAux, 0));
+                        }
+
                         Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(transform.position);
                         GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
 
@@ -104,9 +110,8 @@ public class PlayerMovement : Units
         {
             case 1:
                 {
-
-                    Debug.Log(cellToGo.unityOrConstructionOnCell.GetTeam());
-                    CombatManager.instance.combat(this, cellToGo.unityOrConstructionOnCell);
+                    Debug.Log("Combate");
+                    CombatManager.instance.combat(GetComponent<CombatStats>(), cellToGo.unityOrConstructionOnCell);
 
                     if (!cellToGo.unityOrConstructionOnCell)
                     {
@@ -116,9 +121,8 @@ public class PlayerMovement : Units
                 }
             case 2:
                 {
-                  
-                    GetComponent<Units>().Stack(this,cellToGo.unityOrConstructionOnCell);
-
+                    Debug.Log("Stack");
+                    GetComponent<Units>().Stack(GetComponent<CombatStats>(), cellToGo.unityOrConstructionOnCell);
                     break;
                 }
             case 3:
@@ -130,7 +134,7 @@ public class PlayerMovement : Units
         }
 
         Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(cellToGo.GlobalPosition);
-        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = this;
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = GetComponent<CombatStats>();
 
     }
 
@@ -143,7 +147,7 @@ public class PlayerMovement : Units
     {
         if (!selected)
         {
-            //Debug.Log("Entro");
+            
             selected = true;
             ShowAccesibles();
         }
@@ -158,7 +162,7 @@ public class PlayerMovement : Units
     public void ShowAccesibles()
     {
         byte cont = 0;
-        byte pasos = GetMovementsAvailable();
+        byte pasos = GetComponent<Units>().GetMovementsAvailable();
         Cell cellActual = GridMap.instance.CellFromWorldPoint(transform.position);
         float size = GridMap.instance.GetCellRadius() * 2;
         findAccesibles(cellActual, cellActual, cont, pasos, size);

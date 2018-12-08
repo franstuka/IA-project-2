@@ -121,10 +121,11 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4097197322059278}
-  - component: {fileID: 114336622613401362}
   - component: {fileID: 114106258542912724}
   - component: {fileID: 65296591751026850}
   - component: {fileID: 54799134962348332}
+  - component: {fileID: 114518873886173230}
+  - component: {fileID: 114983938573093668}
   m_Layer: 0
   m_Name: White Stone Pawn
   m_TagString: Untagged
@@ -592,24 +593,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b8163429eaf1b44d8bd28bfa47c9ea7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tier: 0
-  Force: 50
-  MaxForce: 50
-  MaxDamage: 20
-  Damage: 20
-  Type: 1
-  team: 0
-  anim: {fileID: 0}
-  DoDamageSound: {fileID: 0}
-  GetDamageSound: {fileID: 0}
-  DieSound: {fileID: 0}
-  maxMovementsAvailable: 5
-  movementsAvailable: 5
-  forceIncrement: 0.9
-  damageIncrement: 0.9
   nav: {fileID: 0}
   selected: 0
---- !u!114 &114336622613401362
+--- !u!114 &114518873886173230
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -617,7 +603,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1797173294165122}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f42df66950fd5143afca2f62f286b2a, type: 3}
+  m_Script: {fileID: 11500000, guid: c29eeccb36954f749b4dc84b68ca10c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   tier: 0
@@ -635,3 +621,23 @@ MonoBehaviour:
   movementsAvailable: 5
   forceIncrement: 0.9
   damageIncrement: 0.9
+--- !u!114 &114983938573093668
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1797173294165122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e26775c144a5d0644b9ac7acfcbbc651, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  angularSpeed: 120
+  maxSpeed: 3.5
+  acceleration: 4
+  simpleMode: 1
+  stoppingDistanceFactor: 0.22
+  maxCorrectionAcceleration: 15
+  stopped: 1
+  stopSpin: 0
+  stopMove: 0

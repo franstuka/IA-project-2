@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour {
 
         ///////////////////// 
 
-        Vector3 posicion = GridMap.instance.grid[0, 0].GlobalPosition;
+        Vector3 posicion = GridMap.instance.grid[1, 0].GlobalPosition;
         GameObject Peon = Instantiate(peon, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
 
         units[1].AddLast(Peon);
@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour {
         Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(Peon.transform.position);
         GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = Peon.GetComponent<CombatStats>();
 
-        Vector3 posicion2 = GridMap.instance.grid[0, 1].GlobalPosition;
+        Vector3 posicion2 = GridMap.instance.grid[1, 1].GlobalPosition;
         GameObject Peon2 = Instantiate(peon, new Vector3(posicion2.x, 1, posicion2.z), Quaternion.identity);
 
         units[1].AddLast(Peon2);
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour {
         Vector2Int coord2 = GridMap.instance.CellCordFromWorldPoint(Peon2.transform.position);
         GridMap.instance.grid[coord2.x, coord2.y].unityOrConstructionOnCell = Peon2.GetComponent<CombatStats>();
 
-        Vector3 posicion3 = GridMap.instance.grid[1, 0].GlobalPosition;
+        Vector3 posicion3 = GridMap.instance.grid[0, 0].GlobalPosition;
         GameObject Peon3 = Instantiate(peonw, new Vector3(posicion3.x, 1, posicion3.z), Quaternion.identity);
 
         units[0].AddLast(Peon3);
@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private byte turn = 1;
     [SerializeField] private int initialGold = 500;
     [SerializeField] private int baseGoldWin = 25;
-    private List<LinkedList<GameObject>> units;
+    public List<LinkedList<GameObject>> units;
 
 
     [SerializeField] private GameObject peon;
