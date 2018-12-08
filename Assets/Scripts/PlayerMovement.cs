@@ -124,6 +124,7 @@ public class PlayerMovement : MonoBehaviour
                     {
                         nav.SetDestinationPlayerAndCost(cellToGo.GlobalPosition);
                     }
+                    UnSelect();
                     break;
                 }
             case 2:
@@ -134,6 +135,7 @@ public class PlayerMovement : MonoBehaviour
                     {
                         Debug.Log("Stack2");
                         GetComponent<Units>().Stack(GetComponent<CombatStats>(), cellToGo.unityOrConstructionOnCell);
+                        UnSelect();
                     }
                     break;
                 }
