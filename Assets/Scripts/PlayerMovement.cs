@@ -45,17 +45,24 @@ public class PlayerMovement : MonoBehaviour
                         if (cellAux.unityOrConstructionOnCell && (cellAux.unityOrConstructionOnCell.GetTeam() != GetComponent<CombatStats>().GetTeam() || cellAux.unityOrConstructionOnCell.GetUnityType() != GetComponent<CombatStats>().GetUnityType()))
                         {
                             //nav.SetDestinationPlayer(cellAux.GlobalPosition);
-                            LinkedList<Vector2Int> aux = nav.GetSavedPath();
+                            LinkedList<Vector2Int> aux = nav.GetPath(cellAux.GlobalPosition);
+                            
                             byte pasos = 0;
                             for (LinkedListNode<Vector2Int> auxNode = aux.First; auxNode != null; auxNode = auxNode.Next)
                             {
                                 pasos += GridMap.instance.grid[auxNode.Value.x, auxNode.Value.y].GetMovementCost(); 
                             }
 
-                            GetComponent<Units>().SetMovementsAvailable((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
+                            //GetComponent<Units>().SetMovementsAvailable((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
 
                             Debug.Log(aux.Count);
                             aux.RemoveLast();
+                            Cell cellPrevAux = null;
+                            if (aux.Count != 0)
+                            {
+                                cellPrevAux = GridMap.instance.grid[aux.Last.Value.x, aux.Last.Value.y];
+                            }
+
 
                             if (cellAux.unityOrConstructionOnCell.GetTeam() != GetComponent<CombatStats>().GetTeam())
                             {
@@ -66,13 +73,14 @@ public class PlayerMovement : MonoBehaviour
                                 StartCoroutine(WaitUnitilStoped(cellAux, 0));
                             }
 
+                            cellAux = cellPrevAux;
                             //cellAux = GridMap.instance.grid[aux.Last.Value.x, aux.Last.Value.y];
                             Debug.Log(aux.Count);
                         }
                         else if (cellAux.unityOrConstructionOnCell && cellAux.unityOrConstructionOnCell.GetTeam() == GetComponent<CombatStats>().GetTeam())
                         {
-                            nav.SetDestinationPlayerAndCost(cellAux.GlobalPosition);
-                            LinkedList<Vector2Int> aux = nav.GetSavedPath();
+                            //nav.SetDestinationPlayerAndCost(cellAux.GlobalPosition);
+                            LinkedList<Vector2Int> aux = nav.GetPath(cellAux.GlobalPosition);
                             byte pasos = 0;
                             for (LinkedListNode<Vector2Int> auxNode = aux.First; auxNode.Value == null; auxNode = auxNode.Next)
                             {
@@ -80,6 +88,15 @@ public class PlayerMovement : MonoBehaviour
                                 pasos += GridMap.instance.grid[auxNode.Value.x, auxNode.Value.y].GetMovementCost();
                             }
 
+                            Debug.Log(aux.Count);
+                            aux.RemoveLast();
+                            Cell cellPrevAux = null;
+                            if (aux.Count != 0)
+                            {
+                                cellPrevAux = GridMap.instance.grid[aux.Last.Value.x, aux.Last.Value.y];
+                            }
+
+                            
                             //Debug.Log((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
 
                             if (cellAux.unityOrConstructionOnCell.GetUnityType() == GetComponent<CombatStats>().GetUnityType())
@@ -90,6 +107,8 @@ public class PlayerMovement : MonoBehaviour
                             {
                                 StartCoroutine(WaitUnitilStoped(cellAux, 3));
                             }
+
+                            cellAux = cellPrevAux;
                         }
 
                         else
@@ -99,12 +118,16 @@ public class PlayerMovement : MonoBehaviour
 
                         Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(transform.position);
                         
-                        if (cellAux != GridMap.instance.CellFromWorldPoint(transform.position))
+                        /*if (cellAux != GridMap.instance.CellFromWorldPoint(transform.position))
                         {
                             GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
-                        }
+                        }*/
 
-                        nav.SetDestinationPlayer(cellAux.GlobalPosition);
+                        if (cellAux != null)
+                        {
+                            nav.SetDestinationPlayer(cellAux.GlobalPosition);
+                            GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
+                        }
                     }
 
 
@@ -133,9 +156,12 @@ public class PlayerMovement : MonoBehaviour
                     Debug.Log("Combate");
                     CombatManager.instance.combat(GetComponent<CombatStats>(), cellToGo.unityOrConstructionOnCell);
 
-                    if (!cellToGo.unityOrConstructionOnCell)
+                    //Debug.Log(cellToGo.unityOrConstructionOnCell);
+
+                    if (cellToGo.unityOrConstructionOnCell == null)
                     {
-                        nav.SetDestinationPlayerAndCost(cellToGo.GlobalPosition);
+                        Debug.Log("HI!! ^^");
+                        nav.SetDestinationPlayer(cellToGo.GlobalPosition);
                     }
                     UnSelect();
                     break;
@@ -148,6 +174,7 @@ public class PlayerMovement : MonoBehaviour
                     {
                         Debug.Log("Stack2");
                         GetComponent<Units>().Stack(GetComponent<CombatStats>(), cellToGo.unityOrConstructionOnCell);
+                        nav.SetDestinationPlayer(cellToGo.GlobalPosition);
                         UnSelect();
                     }
                     break;
@@ -193,6 +220,7 @@ public class PlayerMovement : MonoBehaviour
             Destroy(areas.First.Value);
             areas.RemoveFirst();
         }
+        
 
     }
 
@@ -234,7 +262,7 @@ public class PlayerMovement : MonoBehaviour
                     {
                         if (!adyacents.Contains(cellAux))
                         {
-                            Debug.Log(cellAux.CellType + " "+ GridMap.instance.CellCordFromWorldPoint(cellAux.GlobalPosition) + "   " + cellAux.GetMovementCost());
+                            //Debug.Log(cellAux.CellType + " "+ GridMap.instance.CellCordFromWorldPoint(cellAux.GlobalPosition) + "   " + cellAux.GetMovementCost());
                             adyacents.AddLast(cellAux);
                         }
 

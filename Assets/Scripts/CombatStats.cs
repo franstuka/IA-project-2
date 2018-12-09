@@ -48,6 +48,10 @@ public class CombatStats : MonoBehaviour {
     public void SetAttack(float attack)
     {
         Force -= attack;
+        if (Force <= 0)
+        {
+            Die();
+        }
     }
 
     public float GetMaxForce()

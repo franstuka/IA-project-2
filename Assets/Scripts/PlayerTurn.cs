@@ -29,8 +29,26 @@ public class PlayerTurn : MonoBehaviour {
                     //Debug.Log(cell.unityOrConstructionOnCell);
                     if (cell.unityOrConstructionOnCell && cell.unityOrConstructionOnCell.GetTeam() == playerTurn)
                     {
-                        selected = cell.unityOrConstructionOnCell;
-                        selected.GetComponent<PlayerMovement>().Select();
+                        /*if ((cell.unityOrConstructionOnCell.GetComponent<Pawn>() && (cell.unityOrConstructionOnCell.GetComponent<Pawn>().GetWorking()>0)))
+                        {
+
+                        }*/
+
+                        if (cell.unityOrConstructionOnCell.GetComponent<Pawn>())
+                        {
+                            if (cell.unityOrConstructionOnCell.GetComponent<Pawn>().GetWorking() == 0)
+                            {
+                                selected = cell.unityOrConstructionOnCell;
+                                selected.GetComponent<PlayerMovement>().Select();
+                            }
+                        }
+                        else
+                        {
+                            selected = cell.unityOrConstructionOnCell;
+                            selected.GetComponent<PlayerMovement>().Select();
+                        }
+                        /*selected = cell.unityOrConstructionOnCell;
+                        selected.GetComponent<PlayerMovement>().Select();*/
                         //Click(selected);
                     }
                 }
@@ -38,9 +56,13 @@ public class PlayerTurn : MonoBehaviour {
 
         }
 
-        if (selected)
+        else if (selected)
         {
-            if (Input.GetMouseButtonDown(1))
+            if (!selected.GetComponent<PlayerMovement>().GetSelected())
+            {
+                selected = null;
+            }
+            else if (Input.GetMouseButtonDown(1))
             {
                 //Debug.Log(selected);
                 selected.GetComponent<PlayerMovement>().UnSelect();
@@ -52,7 +74,7 @@ public class PlayerTurn : MonoBehaviour {
         }
     }
 
-    private void Click(CombatStats selected)
+    /*private void Click(CombatStats selected)
     {
 
             if (selected && playerTurn != selected.GetTeam())
@@ -62,7 +84,7 @@ public class PlayerTurn : MonoBehaviour {
             }
             if (!selected)
             {
-                SelectUnit();
+                //SelectUnit();
 
             }
             else
@@ -96,12 +118,11 @@ public class PlayerTurn : MonoBehaviour {
 
         }
 
-    }
+    }*/
 
-    private void SelectUnit()
+    public void UnselectSelectUnit()
     {
-        
-
+        selected = null;
     }
 
 
@@ -151,6 +172,10 @@ public class PlayerTurn : MonoBehaviour {
                     }
                 }
             }*/
+
+        }
+        else if (selected.GetUnityType() == CombatStats.UnitType.Peon)
+        {
 
         }
 

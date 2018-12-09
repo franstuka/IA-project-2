@@ -55,6 +55,16 @@ public class Navegation : MonoBehaviour {
         savedPath = Astar.GetPath(thisActualSquarePosition, targetActualSquarePosition);
     }
 
+    public LinkedList<Vector2Int> GetPath(Vector3 pos)
+    {
+        Vector2Int thisActualSquarePosition = GridMap.instance.CellCordFromWorldPoint(transform.position);
+        Vector2Int targetActualSquarePosition = GridMap.instance.CellCordFromWorldPoint(pos);
+
+        LinkedList<Vector2Int> auxPath = Astar.GetPath(thisActualSquarePosition, targetActualSquarePosition);
+
+        return auxPath;
+    }
+
     public void SetDestinationPlayer(Vector3 pos) //just move player
     {
         Vector2Int thisActualSquarePosition = GridMap.instance.CellCordFromWorldPoint(transform.position);
