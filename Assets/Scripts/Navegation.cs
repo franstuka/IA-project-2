@@ -60,12 +60,8 @@ public class Navegation : MonoBehaviour {
         Vector2Int thisActualSquarePosition = GridMap.instance.CellCordFromWorldPoint(transform.position);
         Vector2Int targetActualSquarePosition = GridMap.instance.CellCordFromWorldPoint(pos);
         stopped = false;
-
-        if (targetActualSquarePosition != targetLastSquarePosition && Mathf.Abs(thisActualSquarePosition.x - targetActualSquarePosition.x) <=1 
-            && Mathf.Abs(thisActualSquarePosition.y - targetActualSquarePosition.y) <= 1)
-        {
-            savedPath = Astar.GetPath(thisActualSquarePosition, targetActualSquarePosition);
-        }
+        savedPath = Astar.GetPath(thisActualSquarePosition, targetActualSquarePosition);
+        
     }
 
     public byte SetDestinationPlayerAndCost(Vector3 pos) //move and update avaible movements
