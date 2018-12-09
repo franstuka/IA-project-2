@@ -44,7 +44,7 @@ public class PlayerMovement : MonoBehaviour
                     if (adyacents.Contains(cellAux)) {
                         if (cellAux.unityOrConstructionOnCell && (cellAux.unityOrConstructionOnCell.GetTeam() != GetComponent<CombatStats>().GetTeam() || cellAux.unityOrConstructionOnCell.GetUnityType() != GetComponent<CombatStats>().GetUnityType()))
                         {
-                            nav.SetDestinationPlayerAndCost(cellAux.GlobalPosition);
+                            //nav.SetDestinationPlayer(cellAux.GlobalPosition);
                             LinkedList<Vector2Int> aux = nav.GetSavedPath();
                             byte pasos = 0;
                             for (LinkedListNode<Vector2Int> auxNode = aux.First; auxNode != null; auxNode = auxNode.Next)
@@ -56,12 +56,18 @@ public class PlayerMovement : MonoBehaviour
 
                             Debug.Log(aux.Count);
                             aux.RemoveLast();
-                            Debug.Log(aux.Count);
 
                             if (cellAux.unityOrConstructionOnCell.GetTeam() != GetComponent<CombatStats>().GetTeam())
                             {
                                 StartCoroutine(WaitUnitilStoped(cellAux, 1));
                             }
+                            else
+                            {
+                                StartCoroutine(WaitUnitilStoped(cellAux, 0));
+                            }
+
+                            //cellAux = GridMap.instance.grid[aux.Last.Value.x, aux.Last.Value.y];
+                            Debug.Log(aux.Count);
                         }
                         else if (cellAux.unityOrConstructionOnCell && cellAux.unityOrConstructionOnCell.GetTeam() == GetComponent<CombatStats>().GetTeam())
                         {
@@ -120,6 +126,8 @@ public class PlayerMovement : MonoBehaviour
 
         switch (action)
         {
+            case 0:
+                break;
             case 1:
                 {
                     Debug.Log("Combate");
@@ -147,6 +155,10 @@ public class PlayerMovement : MonoBehaviour
             case 3:
                 {
 
+                    break;
+                }
+            default:
+                {
                     break;
                 }
 
@@ -189,6 +201,7 @@ public class PlayerMovement : MonoBehaviour
         byte cont = 0;
         byte pasos = GetComponent<Units>().GetMovementsAvailable();
         Cell cellActual = GridMap.instance.CellFromWorldPoint(transform.position);
+        Debug.Log(cellActual.CellType + "   " + GridMap.instance.CellCordFromWorldPoint(cellActual.GlobalPosition));
         float size = GridMap.instance.GetCellRadius() * 2;
         FindAccesibles(cellActual, cont, pasos, size);
         ShowAreaAccesibles();
@@ -216,11 +229,12 @@ public class PlayerMovement : MonoBehaviour
 
                     Cell cellAux = GridMap.instance.CellFromWorldPoint(new Vector3(cell.GlobalPosition.x + i * size, cell.GlobalPosition.y, cell.GlobalPosition.z + j * size));
 
-                    //Debug.Log(GridMap.instance.CellCordFromWorldPoint(cellAux.GlobalPosition));
+                    
                     if ((cont + cellAux.GetMovementCost()) <=pasos)
                     {
                         if (!adyacents.Contains(cellAux))
                         {
+                            Debug.Log(cellAux.CellType + " "+ GridMap.instance.CellCordFromWorldPoint(cellAux.GlobalPosition) + "   " + cellAux.GetMovementCost());
                             adyacents.AddLast(cellAux);
                         }
 
