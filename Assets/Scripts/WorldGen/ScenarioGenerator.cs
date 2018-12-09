@@ -172,7 +172,7 @@ public class ScenarioGenerator : MonoBehaviour {
                 if(noiseTexture.GetPixel(x,y).grayscale > overridePercentaje)
                 {
                     finalTexture.SetPixel(x, y, colorToSet);
-                    GridMap.instance.grid[x, y].CellType = cellTypes;
+                    GridMap.instance.grid[numCellsX - x -1, numCellsY - y -1].CellType = cellTypes;
                 }         
             }
         }
@@ -227,7 +227,7 @@ public class ScenarioGenerator : MonoBehaviour {
                 if (noiseTexture.GetPixel(x, y).grayscale > baseOverridePercentaje && noiseTextureReplaced.GetPixel(x, y).grayscale < otherOverridePercentaje)
                 {
                     finalTexture.SetPixel(x, y, colorToSet);
-                    GridMap.instance.grid[x, y].CellType = cellTypes;
+                    GridMap.instance.grid[numCellsX - x - 1, numCellsY - y - 1].CellType = cellTypes;
                 }
             }
         }
@@ -616,8 +616,8 @@ public class ScenarioGenerator : MonoBehaviour {
             newMineValue = FindMaximunValueAroundMine(minesPosition[i], ref numCellsX, ref numCellsY, ref noiseLayer);
             finalTexture.SetPixel(newMineValue.x, newMineValue.y, MinesColor);
             finalTexture.SetPixel(minesPosition[i].x, minesPosition[i].y, MinesColor);
-            GridMap.instance.grid[newMineValue.x, newMineValue.y].CellType = CellTypes.MINE;
-            GridMap.instance.grid[minesPosition[i].x, minesPosition[i].y].CellType = CellTypes.MINE;
+            GridMap.instance.grid[numCellsX - newMineValue.x -1, numCellsY - newMineValue.y -1].CellType = CellTypes.MINE;
+            GridMap.instance.grid[numCellsX - minesPosition[i].x -1, numCellsY - minesPosition[i].y -1].CellType = CellTypes.MINE;
         }
 
         #endregion
