@@ -196,20 +196,14 @@ public class PlayerMovement : MonoBehaviour
 
     private void ShowAreaAccesibles()
     {
+        //Debug.Log(adyacents.Count);
         for (LinkedListNode<Cell> cell = adyacents.First; cell != null; cell = cell.Next)
         {
             Vector3 aux = new Vector3(cell.Value.GlobalPosition.x, cell.Value.GlobalPosition.y, cell.Value.GlobalPosition.z);
             GameObject aux2 = Instantiate(area, aux, Quaternion.identity);
             areas.AddLast(aux2);
-            //GameObject aux2 = area;
-            //aux2.transform.position = aux;
-            //areas.AddLast(aux2);
-            //Instantiate(aux2, aux2.transform);
+
         }
-        /*Debug.Log(adyacents.Count);
-        Vector3 aux = transform.position;
-        GameObject aux2 = Instantiate(area, aux, Quaternion.identity);*/
-       // aux2.transform.localScale = new Vector3(GridMap.instance.GetCellRadius(), 1, GridMap.instance.GetCellRadius());
     }
 
     private void FindAccesibles(Cell cell,  int cont, byte pasos, float size) 

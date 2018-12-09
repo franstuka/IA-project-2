@@ -107,7 +107,13 @@ public class GameManager : MonoBehaviour {
         {
             turn++;
         }
-
+        for (LinkedListNode<GameObject> node = units[turn].First; node != null; node = node.Next)
+        {
+            if (node.Value.GetComponent<Units>())
+            {
+                node.Value.GetComponent<Units>().SetMovementsAvailable(node.Value.GetComponent<Units>().GetMaxMovementsAvaliable());
+            }
+        }
     }
 
     void UpdateGold()

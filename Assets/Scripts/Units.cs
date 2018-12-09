@@ -45,6 +45,10 @@ public class Units : CombatStats {
         Debug.Log(GetForce() + " " + name);
 		
 	}    
+    public byte GetMaxMovementsAvaliable()
+    {
+        return maxMovementsAvailable;
+    }
 
     public byte GetMovementsAvailable()
     {
