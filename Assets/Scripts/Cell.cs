@@ -41,10 +41,14 @@ public class Cell {
                 {
                     return byte.MaxValue;
                 }
+            case CellTypes.MINE:
+                {
+                    return 1;
+                }
             default:
                 {
                     Debug.LogError("UnknowCell");
-                    return 0;
+                    return 1;
                 }
         }
 

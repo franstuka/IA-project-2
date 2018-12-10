@@ -6,14 +6,29 @@ public class PlayerTurn : MonoBehaviour {
 
     private byte playerTurn;
     //private byte lastTurn;
-    private CombatStats selected;
+    [SerializeField] private CombatStats selected;
 
-    private void Start()
+    /*private void Start()
     {
         playerTurn = GameManager.instance.GetTurn();
-    }
+    }*/
     void LateUpdate()
     {
+        playerTurn = GameManager.instance.GetTurn();
+
+        Debug.Log(selected);
+        Debug.Log(playerTurn);
+        if (selected)
+        {
+            Debug.Log(selected.GetTeam());
+        }
+
+        if (selected && playerTurn != selected.GetTeam())
+        {
+            Debug.Log("HI!! ^^");
+            selected.GetComponent<PlayerMovement>().UnSelect(); //No recuerdo si se podia hacer así
+            selected = null;
+        }
 
         if (!selected)
         {
@@ -103,7 +118,7 @@ public class PlayerTurn : MonoBehaviour {
                                 && GridMap.instance.grid[coord.x + i, coord.y + j].unityOrConstructionOnCell == null)
                             {
                                 Vector3 pos = GridMap.instance.grid[coord.x + i, coord.y + j].GlobalPosition;
-                                selected.GetComponent<Pawn>().CreateTower(pos);
+                                selected.GetComponent<Pawn>().StartConstruction(pos);
                                 //Vector3 pos = GridMap.instance.grid[coord.x + 1, coord.y].GlobalPosition;
                                 //selected.GetComponent<Pawn>().CreateTower(pos);
                             }

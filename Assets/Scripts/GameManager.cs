@@ -90,7 +90,6 @@ public class GameManager : MonoBehaviour {
     void Update () {
         if (Input.GetKeyDown(KeyCode.Space)) //&& turn == 1)
         {
-            Debug.Log("ChangeTurn");
             ChangeTurn();   
         }      	
     }
@@ -99,7 +98,7 @@ public class GameManager : MonoBehaviour {
 
     public void ChangeTurn()
     {
-        Debug.Log("Change Turn");
+        //Debug.Log("Change Turn Player: " + turn);
         UpdateGold();
         AddUnits();
 
@@ -124,6 +123,8 @@ public class GameManager : MonoBehaviour {
                 node.Value.GetComponent<Units>().SetMovementsAvailable(node.Value.GetComponent<Units>().GetMaxMovementsAvaliable());
             }
         }
+
+        Debug.Log("Change Turn Player: " + turn);
     }
 
     void UpdateGold()

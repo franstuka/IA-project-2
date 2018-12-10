@@ -8,7 +8,7 @@ public class Pawn : Units {
     private bool isMining;
     [SerializeField] private byte working = 0;
 
-    private Vector2Int workZone;
+    private Vector3 workZone;
 
     [SerializeField] GameObject tower;
 
@@ -32,18 +32,18 @@ public class Pawn : Units {
             working--;
             if (working == 0)
             {
-                //CreateTower();
+                CreateTower();
             }
         }
     }
 
-    public void StartConstruction(Vector2Int workZone)
+    public void StartConstruction(Vector3 workZone)
     {
         this.workZone = workZone;
         working = 3;
     }
 
-    public void CreateTower(Vector3 pos) // Cambiar
+    public void CreateTower() // Cambiar
     {
         if(GameManager.instance.GetPlayersGold(GameManager.instance.GetTurn()) - towerCost >= 0)
         {
@@ -52,10 +52,10 @@ public class Pawn : Units {
             //Instantiate(tower, new Vector3(posicion.x, posicion.y, 0) , Quaternion.identity); 
             //Debug.Log(posTower);
 
-            GameObject Tower = Instantiate(tower, new Vector3(pos.x , 1, pos.z), Quaternion.identity);
+            GameObject Tower = Instantiate(tower, new Vector3(workZone.x , 1, workZone.z), Quaternion.identity);
             Vector2Int posTower = GridMap.instance.CellCordFromWorldPoint(Tower.transform.position);
             GridMap.instance.grid[posTower.x, posTower.y].unityOrConstructionOnCell = this;
-            workZone = new Vector2Int();
+            workZone = new Vector3();
             GetComponent<PlayerMovement>().UnSelect();
         }
     }
