@@ -16,12 +16,12 @@ public class PlayerTurn : MonoBehaviour {
     {
         playerTurn = GameManager.instance.GetTurn();
 
-        Debug.Log(selected);
-        Debug.Log(playerTurn);
-        if (selected)
-        {
-            Debug.Log(selected.GetTeam());
-        }
+        //Debug.Log(selected == null);
+        //Debug.Log(playerTurn);
+        //if (selected)
+        //{
+        //    Debug.Log(selected.GetTeam());
+        //}
 
         if (selected && playerTurn != selected.GetTeam())
         {
@@ -184,6 +184,7 @@ public class PlayerTurn : MonoBehaviour {
     private bool Unselect() {
         if (Input.GetMouseButtonDown(1))
         {
+
             return true;
         }
         return false;

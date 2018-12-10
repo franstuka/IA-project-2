@@ -9,9 +9,10 @@ public class Structures : CombatStats {
     private byte[] UnitCost;  
     private byte unitSelected;
     private byte range;
-    private byte slots;   
+    private byte slots = 0;   
     private struct unitData{
-        string unit;
+        //string unit;
+        UnitType type; 
         byte tier;
         float maxForce;
         float force;
@@ -19,9 +20,9 @@ public class Structures : CombatStats {
         byte turn;
 
 
-        public unitData(string unit, byte tier, float maxForce, float force, float maxDamage, byte turn)
+        public unitData(UnitType type, byte tier, float maxForce, float force, float maxDamage, byte turn)
         {
-            this.unit = unit;
+            this.type = type;
             this.tier = tier;
             this.maxForce = maxForce;
             this.force = force;
@@ -34,8 +35,7 @@ public class Structures : CombatStats {
     [SerializeField] private GameObject caballero;
     [SerializeField] private GameObject lancero;
     [SerializeField] private GameObject general;
-
-    [SerializeField] private LinkedList<unitData> units;
+    [SerializeField] private LinkedList<unitData> units = new LinkedList<unitData>();
 
 
     // Use this for initialization
@@ -69,8 +69,23 @@ public class Structures : CombatStats {
 
     public void SaveUnit(CombatStats unit)
     {
-        unitData data = new unitData(unit.GetComponentInParent<GameObject>().name , unit.GetTier(), unit.GetMaxForce(), unit.GetForce(), unit.GetMaxDamage(), 0);
-        units.AddLast(data);
+        if(slots < maxSlots)
+        {
+            slots++;
+            Debug.Log(unit == null);
+            unit.GetComponent<PlayerMovement>().UnSelect();
+            //unitData data = new unitData(unit.GetComponentInParent<GameObject>().name , unit.GetTier(), unit.GetMaxForce(), unit.GetForce(), unit.GetMaxDamage(), 0);
+            unitData data = new unitData(unit.GetUnityType(), unit.GetTier(), unit.GetMaxForce(), unit.GetForce(), unit.GetMaxDamage(), 0);
+            units.AddLast(data);
+            Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(unit.transform.position);
+            GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
+            List<LinkedList<GameObject>> unitlist = GameManager.instance.GetUnitList();
+            //LinkedListNode<GameObject> node = unitlist[unit.GetTeam()].Find(unit.GetComponent<GameObject>());
+            Debug.Log(unitlist[unit.GetTeam()].Count);
+            unitlist[unit.GetTeam()].Remove(unit.GetComponent<GameObject>());
+            Debug.Log(unitlist[unit.GetTeam()].Count);
+            Destroy(unit.transform.gameObject);
+        }
     }
 
     public void CreateUnit(UnitType type, CombatStats torre)
@@ -118,7 +133,7 @@ public class Structures : CombatStats {
                     GameManager.instance.ChangeGold(goldToSubstract);
                     slots++;
 
-                    data = new unitData(piece.name, piece.GetComponent<CombatStats>().GetTier(), piece.GetComponent<CombatStats>().GetMaxForce(), piece.GetComponent<CombatStats>().GetForce(), piece.GetComponent<CombatStats>().GetMaxDamage(), turns);
+                    data = new unitData(piece.GetComponent<CombatStats>().GetUnityType(), piece.GetComponent<CombatStats>().GetTier(), piece.GetComponent<CombatStats>().GetMaxForce(), piece.GetComponent<CombatStats>().GetForce(), piece.GetComponent<CombatStats>().GetMaxDamage(), turns);
 
                     /*Vector2Int posTorre = GridMap.instance.CellCordFromWorldPoint(torre.transform.position);
                     Instantiate(piece, new Vector3 (posTorre.x, posTorre.y, 0) , Quaternion.identity);*/

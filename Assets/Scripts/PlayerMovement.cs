@@ -43,7 +43,7 @@ public class PlayerMovement : MonoBehaviour
                     Cell cellAux = GridMap.instance.CellFromWorldPoint(hit.point);
                     //Debug.Log(adyacents.Contains(cellAux));
                     if (adyacents.Contains(cellAux)) {
-                        if (cellAux.unityOrConstructionOnCell && (cellAux.unityOrConstructionOnCell.GetTeam() != GetComponent<CombatStats>().GetTeam() || cellAux.unityOrConstructionOnCell.GetUnityType() != GetComponent<CombatStats>().GetUnityType()))
+                        if (cellAux.unityOrConstructionOnCell && (cellAux.unityOrConstructionOnCell.GetTeam() != GetComponent<CombatStats>().GetTeam())) // cellAux.unityOrConstructionOnCell.GetUnityType() != GetComponent<CombatStats>().GetUnityType()))
                         {
                             //nav.SetDestinationPlayer(cellAux.GlobalPosition);
                             LinkedList<Vector2Int> aux = nav.GetPath(cellAux.GlobalPosition);
@@ -56,7 +56,7 @@ public class PlayerMovement : MonoBehaviour
 
                             //GetComponent<Units>().SetMovementsAvailable((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
 
-                            Debug.Log(aux.Count);
+                            //Debug.Log(aux.Count);
                             aux.RemoveLast();
                             Cell cellPrevAux = null;
                             if (aux.Count != 0)
@@ -104,8 +104,10 @@ public class PlayerMovement : MonoBehaviour
                             {
                                 StartCoroutine(WaitUnitilStoped(cellAux, 2));
                             }
+
                             else if (cellAux.unityOrConstructionOnCell.GetUnityType() == CombatStats.UnitType.Torre)
                             {
+                                Debug.Log("Entro Torre");
                                 StartCoroutine(WaitUnitilStoped(cellAux, 3));
                             }
 
@@ -182,6 +184,8 @@ public class PlayerMovement : MonoBehaviour
                 }
             case 3:
                 {
+                    Debug.Log("Entrar en torre");
+                    cellToGo.unityOrConstructionOnCell.GetComponent<Structures>().SaveUnit(GetComponent<CombatStats>());
 
                     break;
                 }
@@ -241,7 +245,7 @@ public class PlayerMovement : MonoBehaviour
         byte cont = 0;
         byte pasos = GetComponent<Units>().GetMovementsAvailable();
         Cell cellActual = GridMap.instance.CellFromWorldPoint(transform.position);
-        Debug.Log(cellActual.CellType + "   " + GridMap.instance.CellCordFromWorldPoint(cellActual.GlobalPosition));
+        //Debug.Log(cellActual.CellType + "   " + GridMap.instance.CellCordFromWorldPoint(cellActual.GlobalPosition));
         float size = GridMap.instance.GetCellRadius() * 2;
         FindAccesibles(cellActual, cont, pasos, size);
         ShowAreaAccesibles();
