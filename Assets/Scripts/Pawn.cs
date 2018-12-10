@@ -32,7 +32,7 @@ public class Pawn : Units {
             working--;
             if (working == 0)
             {
-                CreateTower();
+                //CreateTower();
             }
         }
     }
@@ -43,15 +43,20 @@ public class Pawn : Units {
         working = 3;
     }
 
-    void CreateTower()
+    public void CreateTower(Vector3 pos) // Cambiar
     {
         if(GameManager.instance.GetPlayersGold(GameManager.instance.GetTurn()) - towerCost >= 0)
         {
-            GameManager.instance.ChangeGold(towerCost);
+            //GameManager.instance.ChangeGold(towerCost);
             //Vector2Int posicion = GridMap.instance.CellCordFromWorldPoint(pos.transform.position);
             //Instantiate(tower, new Vector3(posicion.x, posicion.y, 0) , Quaternion.identity); 
-            Instantiate(tower, new Vector3(workZone.x, workZone.y, 0), Quaternion.identity);
+            //Debug.Log(posTower);
+
+            GameObject Tower = Instantiate(tower, new Vector3(pos.x , 1, pos.z), Quaternion.identity);
+            Vector2Int posTower = GridMap.instance.CellCordFromWorldPoint(Tower.transform.position);
+            GridMap.instance.grid[posTower.x, posTower.y].unityOrConstructionOnCell = this;
             workZone = new Vector2Int();
+            GetComponent<PlayerMovement>().UnSelect();
         }
     }
 

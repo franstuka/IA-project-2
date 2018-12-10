@@ -87,19 +87,23 @@ public class GameManager : MonoBehaviour {
     }
 
     // Update is called once per frame
-    void Update () {        
-        //ChangeTurn();        	
-	}
+    void Update () {
+        if (Input.GetKeyDown(KeyCode.Space)) //&& turn == 1)
+        {
+            Debug.Log("ChangeTurn");
+            ChangeTurn();   
+        }      	
+    }
 
 
 
     public void ChangeTurn()
     {
-
+        Debug.Log("Change Turn");
         UpdateGold();
         AddUnits();
 
-        if (turn++ > playersNum -1)
+        if (turn ==  playersNum -1)
         {
             turn = 0;
         }
@@ -107,6 +111,7 @@ public class GameManager : MonoBehaviour {
         {
             turn++;
         }
+
         for (LinkedListNode<GameObject> node = units[turn].First; node != null; node = node.Next)
         {
             if (node.Value.GetComponent<Pawn>())
@@ -130,7 +135,7 @@ public class GameManager : MonoBehaviour {
                 playersGold[turn] += baseGoldWin * node.Value.GetComponent<Pawn>().GetTier();
             node = node.Next;
         }
-        goldText.text = "" + playersGold[turn];
+        //goldText.text = "" + playersGold[turn];
     }
 
     void AddUnits()

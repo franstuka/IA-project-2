@@ -23,6 +23,7 @@ public class UI : MonoBehaviour {
 
     void NewTurn()
     {
+        Debug.Log("Button");
         GameManager.instance.ChangeTurn();
     }
 

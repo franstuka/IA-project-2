@@ -14,6 +14,7 @@ public class PlayerTurn : MonoBehaviour {
     }
     void LateUpdate()
     {
+
         if (!selected)
         {
             if (Input.GetMouseButtonDown(0))
@@ -58,6 +59,12 @@ public class PlayerTurn : MonoBehaviour {
 
         else if (selected)
         {
+            if (Input.GetKeyDown("t") && selected.GetUnityType() == CombatStats.UnitType.Peon)
+            {
+                selected.GetComponent<PlayerMovement>().Construct();
+                //createUnit(UnitType.Peon, );
+            }
+
             if (!selected.GetComponent<PlayerMovement>().GetSelected())
             {
                 selected = null;
@@ -72,6 +79,39 @@ public class PlayerTurn : MonoBehaviour {
             }
 
         }
+
+        if (selected  && selected.GetComponent<PlayerMovement>().GetConstruct() == true)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                RaycastHit hit;
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+                if (Physics.Raycast(ray, out hit, Mathf.Infinity, ~13)) //layer 13 click detection
+                {
+                    Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(selected.transform.position);
+                    Vector2Int rayhit = GridMap.instance.CellCordFromWorldPoint(hit.point);
+
+
+                    for (int i = -1; i < 2; i++)
+                    {
+                        for (int j = -1; j < 2; j++)
+                        {
+                            if (rayhit.x == coord.x + i && rayhit.y == coord.y + j
+                                && coord.x + i >= 0 && coord.x + i < GridMap.instance.GetGridSizeX()
+                                && coord.y + j >= 0 && coord.y + j < GridMap.instance.GetGridSizeY()
+                                && GridMap.instance.grid[coord.x + i, coord.y + j].unityOrConstructionOnCell == null)
+                            {
+                                Vector3 pos = GridMap.instance.grid[coord.x + i, coord.y + j].GlobalPosition;
+                                selected.GetComponent<Pawn>().CreateTower(pos);
+                                //Vector3 pos = GridMap.instance.grid[coord.x + 1, coord.y].GlobalPosition;
+                                //selected.GetComponent<Pawn>().CreateTower(pos);
+                            }
+                        }
+                    }
+                }
+            }
+        }         
     }
 
     /*private void Click(CombatStats selected)
@@ -180,4 +220,5 @@ public class PlayerTurn : MonoBehaviour {
         }
 
     }
+
 }

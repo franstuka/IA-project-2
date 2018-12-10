@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     private LinkedList<Cell> adyacents;
     private LinkedList<GameObject> areas;
     private bool moving = false;
+    [SerializeField] private bool construct = false;
 
     private void Awake()
     {
@@ -30,7 +31,7 @@ public class PlayerMovement : MonoBehaviour
     void Update () {
         //Debug.Log(moving);
 
-        if (selected && moving != true)
+        if (selected && moving != true && construct == false)
         {
             if (Input.GetMouseButtonDown(0))
             {
@@ -46,11 +47,11 @@ public class PlayerMovement : MonoBehaviour
                         {
                             //nav.SetDestinationPlayer(cellAux.GlobalPosition);
                             LinkedList<Vector2Int> aux = nav.GetPath(cellAux.GlobalPosition);
-                            
+
                             byte pasos = 0;
                             for (LinkedListNode<Vector2Int> auxNode = aux.First; auxNode != null; auxNode = auxNode.Next)
                             {
-                                pasos += GridMap.instance.grid[auxNode.Value.x, auxNode.Value.y].GetMovementCost(); 
+                                pasos += GridMap.instance.grid[auxNode.Value.x, auxNode.Value.y].GetMovementCost();
                             }
 
                             //GetComponent<Units>().SetMovementsAvailable((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
@@ -96,7 +97,7 @@ public class PlayerMovement : MonoBehaviour
                                 cellPrevAux = GridMap.instance.grid[aux.Last.Value.x, aux.Last.Value.y];
                             }
 
-                            
+
                             //Debug.Log((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
 
                             if (cellAux.unityOrConstructionOnCell.GetUnityType() == GetComponent<CombatStats>().GetUnityType())
@@ -117,7 +118,7 @@ public class PlayerMovement : MonoBehaviour
                         }
 
                         Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(transform.position);
-                        
+
                         /*if (cellAux != GridMap.instance.CellFromWorldPoint(transform.position))
                         {
                             GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
@@ -201,6 +202,11 @@ public class PlayerMovement : MonoBehaviour
         return selected;
     }
 
+    public bool GetConstruct()
+    {
+        return construct;
+    }
+
     public void Select()
     {
         if (!selected)
@@ -214,6 +220,7 @@ public class PlayerMovement : MonoBehaviour
     {
         GetComponent<Units>().SetMovementsAvailable(0);
         selected = false;
+        construct = false;
         adyacents.Clear();
         while(areas.Count>0)
         {
@@ -222,6 +229,11 @@ public class PlayerMovement : MonoBehaviour
         }
         
 
+    }
+
+    public void Construct()
+    {
+        construct = true;
     }
 
     public void ShowAccesibles()
