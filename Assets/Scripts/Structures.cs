@@ -9,7 +9,8 @@ public class Structures : CombatStats {
     private byte[] UnitCost;  
     private byte unitSelected;
     private byte range;
-    private byte slots = 0;   
+    private byte slots = 0;
+    [SerializeField] bool actionAvaliable = true;
     private struct unitData{
         //string unit;
         UnitType type; 
@@ -28,6 +29,36 @@ public class Structures : CombatStats {
             this.force = force;
             this.maxDamage = maxDamage;
             this.turn = turn;
+        }
+
+        public UnitType GetUnitType()
+        {
+            return type;
+        }
+
+        public byte GetUnitTier()
+        {
+            return tier;
+        }
+
+        public float GetUnitMaxForce()
+        {
+            return maxForce;
+        }
+
+        public float GetUnitForce()
+        {
+            return force;
+        }
+
+        public float GetUnitMaxDamage()
+        {
+            return maxDamage;
+        }
+
+        public byte GetUnitTurn()
+        {
+            return turn;
         }
     }
 
@@ -49,7 +80,7 @@ public class Structures : CombatStats {
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	/*void Update () {
         if (Input.GetKey("a")) {
            //createUnit(UnitType.Peon, );
         }
@@ -65,26 +96,72 @@ public class Structures : CombatStats {
            //createUnit(UnitType.General, );
         }
 
-    }
+    }*/
 
-    public void SaveUnit(CombatStats unit)
+    public void SaveUnit(CombatStats unit, byte turns,byte coste)
     {
         if(slots < maxSlots)
         {
-            slots++;
-            Debug.Log(unit == null);
-            unit.GetComponent<PlayerMovement>().UnSelect();
-            //unitData data = new unitData(unit.GetComponentInParent<GameObject>().name , unit.GetTier(), unit.GetMaxForce(), unit.GetForce(), unit.GetMaxDamage(), 0);
-            unitData data = new unitData(unit.GetUnityType(), unit.GetTier(), unit.GetMaxForce(), unit.GetForce(), unit.GetMaxDamage(), 0);
-            units.AddLast(data);
-            Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(unit.transform.position);
-            GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
-            List<LinkedList<GameObject>> unitlist = GameManager.instance.GetUnitList();
-            //LinkedListNode<GameObject> node = unitlist[unit.GetTeam()].Find(unit.GetComponent<GameObject>());
-            Debug.Log(unitlist[unit.GetTeam()].Count);
-            unitlist[unit.GetTeam()].Remove(unit.gameObject);
-            Debug.Log(unitlist[unit.GetTeam()].Count);
-            Destroy(unit.gameObject);
+            if (GameManager.instance.GetPlayersGold(GameManager.instance.GetTurn()) - coste >= 0)
+            {
+                GameManager.instance.ChangeGold(coste);
+                slots++;
+                Debug.Log(unit == null);
+                //unitData data = new unitData(unit.GetComponentInParent<GameObject>().name , unit.GetTier(), unit.GetMaxForce(), unit.GetForce(), unit.GetMaxDamage(), 0);
+                unitData data = new unitData(unit.GetUnityType(), unit.GetTier(), unit.GetMaxForce(), unit.GetForce(), unit.GetMaxDamage(), turns);
+                units.AddLast(data);
+                if (turns == 0)
+                {
+                    unit.GetComponent<PlayerMovement>().UnSelect();
+                    Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(unit.transform.position);
+                    GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
+                    List<LinkedList<GameObject>> unitlist = GameManager.instance.GetUnitList();
+                    //LinkedListNode<GameObject> node = unitlist[unit.GetTeam()].Find(unit.GetComponent<GameObject>());
+                    Debug.Log(unitlist[unit.GetTeam()].Count);
+                    unitlist[unit.GetTeam()].Remove(unit.gameObject);
+                    Debug.Log(unitlist[unit.GetTeam()].Count);
+                    Destroy(unit.gameObject);
+                }
+            }
+
+        }
+    }
+    public void GenerateUnit(byte slot, Vector2Int posicion)
+    {
+        if (slot > units.Count - 1) {
+
+            LinkedListNode<unitData> node = units.First;
+            for (int i = 0; i < slot; i++)
+            {
+                node = node.Next;
+            }
+
+            unitData data = node.Value;
+            GameObject piece = new GameObject();
+
+            switch (data.GetUnitType())
+            {
+                case UnitType.Peon:
+                    piece = peon;
+                    break;
+
+                case UnitType.Lancero: 
+                    piece = lancero;
+                    break;
+
+                case UnitType.Caballeria:
+                    piece = caballero;
+                    break;
+
+                case UnitType.General:
+                    piece = general;
+                    
+                    break;
+
+                default:
+                    break;
+            }
+
 
         }
     }
@@ -96,7 +173,7 @@ public class Structures : CombatStats {
             byte goldToSubstract = 0;
             GameObject piece = null;
             byte turns = 0;
-            unitData data;
+            //unitData data;
 
             switch (type)
             {
@@ -129,20 +206,45 @@ public class Structures : CombatStats {
             }
             if (piece)
             {
-                if (GameManager.instance.GetPlayersGold(GameManager.instance.GetTurn()) - goldToSubstract >= 0)
-                {
-                    GameManager.instance.ChangeGold(goldToSubstract);
-                    slots++;
+                SaveUnit(piece.GetComponent<CombatStats>(), turns, goldToSubstract);
+                // slots++;
 
-                    data = new unitData(piece.GetComponent<CombatStats>().GetUnityType(), piece.GetComponent<CombatStats>().GetTier(), piece.GetComponent<CombatStats>().GetMaxForce(), piece.GetComponent<CombatStats>().GetForce(), piece.GetComponent<CombatStats>().GetMaxDamage(), turns);
+                //data = new unitData(piece.GetComponent<CombatStats>().GetUnityType(), piece.GetComponent<CombatStats>().GetTier(), piece.GetComponent<CombatStats>().GetMaxForce(), piece.GetComponent<CombatStats>().GetForce(), piece.GetComponent<CombatStats>().GetMaxDamage(), turns);
 
-                    /*Vector2Int posTorre = GridMap.instance.CellCordFromWorldPoint(torre.transform.position);
-                    Instantiate(piece, new Vector3 (posTorre.x, posTorre.y, 0) , Quaternion.identity);*/
-                }
+                /*Vector2Int posTorre = GridMap.instance.CellCordFromWorldPoint(torre.transform.position);
+                Instantiate(piece, new Vector3 (posTorre.x, posTorre.y, 0) , Quaternion.identity);*/
             }
+           
         }                                            
     }
 
+    public List<UnitType> UnitsInside()
+    {
+        List<UnitType> list = new List<UnitType>();
+
+        for (LinkedListNode<unitData> node = units.First; node != null; node = node.Next)
+        {
+            list.Add(node.Value.GetUnitType());
+        }
+
+        return list;
+    } 
+
+    public void SetActionAvaliable()
+    {
+        actionAvaliable = true;
+    }
+
+    public void SetActionUnavaliable()
+    {
+        actionAvaliable = false;
+    }
+
+    public bool GetActionAvaliable()
+    {
+        return actionAvaliable;
+    }
+    
     public void SpawnUnit(Vector2Int pos)
     {
 

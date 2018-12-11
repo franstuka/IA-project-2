@@ -25,7 +25,7 @@ public class PlayerTurn : MonoBehaviour {
 
         if (selected && playerTurn != selected.GetTeam())
         {
-            Debug.Log("HI!! ^^");
+            //Debug.Log("HI!! ^^");
             selected.GetComponent<PlayerMovement>().UnSelect(); //No recuerdo si se podia hacer así
             selected = null;
         }
@@ -62,6 +62,16 @@ public class PlayerTurn : MonoBehaviour {
                         {
                             selected = cell.unityOrConstructionOnCell;
                             selected.GetComponent<PlayerMovement>().Select();
+                            if(selected.GetUnityType() == CombatStats.UnitType.Torre)
+                            {
+                                List<CombatStats.UnitType> list = selected.GetComponent<Structures>().UnitsInside();
+
+                                for (int i = 0; i < list.Count; i++)
+                                {
+                                    Debug.Log( (i+1) + ": " + list[i]);
+                                }
+                                //Debug.Log("1: " + list[0] +"  2: " + list[1] + "  3: " + list[2]);
+                            }
                         }
                         /*selected = cell.unityOrConstructionOnCell;
                         selected.GetComponent<PlayerMovement>().Select();*/
@@ -73,7 +83,17 @@ public class PlayerTurn : MonoBehaviour {
         }
 
         else if (selected)
-        {
+        {   if(selected.GetUnityType() == CombatStats.UnitType.Torre)
+            {
+                if (Input.GetKeyDown("2"))
+                {
+                    Vector2Int aux = findAvaliablePosition();
+                    if (aux.x != -1 && aux.y != -1)
+                    {
+                        selected.GetComponent<Structures>().GenerateUnit(0, aux);
+                    }
+                }
+            }
             if (Input.GetKeyDown("t") && selected.GetUnityType() == CombatStats.UnitType.Peon)
             {
                 selected.GetComponent<PlayerMovement>().Construct();
@@ -127,6 +147,31 @@ public class PlayerTurn : MonoBehaviour {
                 }
             }
         }         
+    }
+
+    
+
+    private Vector2Int findAvaliablePosition()
+    {
+        Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(selected.transform.position);
+
+        for (int i = -1; i <= 1; i++)
+        {
+            for (int j = -1; j <= 1; j++)
+            {
+                if (coord.x + i >= 0 && coord.x + i < GridMap.instance.GetGridSizeX()
+                    && coord.y + j >= 0 && coord.y + j < GridMap.instance.GetGridSizeY())
+                {
+                    Cell cellAux = GridMap.instance.CellFromWorldPoint(GridMap.instance.grid[coord.x + i, coord.y + j].GlobalPosition);
+                    if (!cellAux.unityOrConstructionOnCell || cellAux.CellType != CellTypes.MOUNTAINS || cellAux.CellType != CellTypes.CASTLE)
+                    {
+                        return GridMap.instance.CellCordFromWorldPoint(cellAux.GlobalPosition);
+                    }
+                }
+            }
+        }
+
+        return new Vector2Int(-1, -1);
     }
 
     /*private void Click(CombatStats selected)

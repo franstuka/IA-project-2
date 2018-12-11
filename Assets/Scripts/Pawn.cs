@@ -5,7 +5,7 @@ using UnityEngine;
 public class Pawn : Units {
     
     private byte towerCost = 200;
-    private bool isMining;
+    [SerializeField] private bool isMining;
     [SerializeField] private byte working = 0;
 
     private Vector3 workZone;
@@ -19,6 +19,16 @@ public class Pawn : Units {
 	
 	// Update is called once per frame
 	void Update () {
+
+        Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(transform.position);
+        if (GridMap.instance.grid[coord.x,coord.y].CellType == CellTypes.MINE)
+        {
+            isMining = true;
+        }
+        else
+        {
+            isMining = false;
+        }
         if (Input.GetKey("g"))
         {
             //createTowee( );

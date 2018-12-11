@@ -418,6 +418,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d0dad7637484a648b427a18091f001b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selected: {fileID: 0}
 --- !u!114 &1966723713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -434,17 +435,18 @@ MonoBehaviour:
   playersGold: 
   turn: 1
   initialGold: 500
-  baseGoldWin: 25
+  baseGoldWin: 50
   peon: {fileID: 1437362888727348, guid: 96ade03d26e955e4f8281b8238032f21, type: 2}
-  caballero: {fileID: 0}
-  lancero: {fileID: 0}
-  general: {fileID: 0}
-  torre: {fileID: 0}
+  caballero: {fileID: 1077814197357278, guid: a994e73772769c74099074f520815d57, type: 2}
+  lancero: {fileID: 1343074871687160, guid: 6da86310dbe5a114cbdfc522afd4a7d9, type: 2}
+  general: {fileID: 1550707335732298, guid: 656964943c88f584c8cfb47e95dbb1cd, type: 2}
+  torre: {fileID: 1111153767849302, guid: 7362dfd71dc299e4e86d6f065e2f1449, type: 2}
   peonw: {fileID: 1797173294165122, guid: 0db6c9a3445800a439de91cd6ebd1cb0, type: 2}
-  caballerow: {fileID: 0}
-  lancerow: {fileID: 0}
-  generalw: {fileID: 0}
-  torrew: {fileID: 0}
+  caballerow: {fileID: 1046960430172304, guid: b08c14f8f6289a24da80d2cf497ee515, type: 2}
+  lancerow: {fileID: 1205724348554290, guid: db1450b0a923e3140a3583f2a9b6075a, type: 2}
+  generalw: {fileID: 1945805229888442, guid: 2ab7232d5f06bf447b85a9393e66404a, type: 2}
+  torrew: {fileID: 1305849610943784, guid: 87297deaa01621f48b200bfd1352610c, type: 2}
+  currentMoney: 0
 --- !u!4 &1966723714
 Transform:
   m_ObjectHideFlags: 0

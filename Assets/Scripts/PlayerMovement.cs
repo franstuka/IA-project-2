@@ -33,6 +33,8 @@ public class PlayerMovement : MonoBehaviour
 
         if (selected && moving != true && construct == false)
         {
+            //Debug.Log(this.name);
+            //Debug.Log(this == null);
             if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit hit;
@@ -128,8 +130,12 @@ public class PlayerMovement : MonoBehaviour
 
                         if (cellAux != null)
                         {
-                            nav.SetDestinationPlayer(cellAux.GlobalPosition);
-                            GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
+                            if (!GetComponent<Structures>())
+                            {
+                                nav.SetDestinationPlayer(cellAux.GlobalPosition);
+                                GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
+                            }
+
                         }
                     }
 
@@ -159,13 +165,28 @@ public class PlayerMovement : MonoBehaviour
                     Debug.Log("Combate");
                     CombatManager.instance.combat(GetComponent<CombatStats>(), cellToGo.unityOrConstructionOnCell);
 
-                    //Debug.Log(cellToGo.unityOrConstructionOnCell);
+                    if (GetComponent<Units>())
+                    { //Debug.Log(cellToGo.unityOrConstructionOnCell);
 
-                    if (cellToGo.unityOrConstructionOnCell == null)
-                    {
-                        Debug.Log("HI!! ^^");
-                        nav.SetDestinationPlayer(cellToGo.GlobalPosition);
+                        if (cellToGo.unityOrConstructionOnCell == null)
+                        {
+                            Debug.Log("HI!! ^^");
+                            nav.SetDestinationPlayer(cellToGo.GlobalPosition);
+
+                            Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(cellToGo.GlobalPosition);
+                            GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = GetComponent<CombatStats>();
+                            moving = false;
+                        }
+                        else
+                        {
+                            Vector2Int pos = GridMap.instance.CellCordFromWorldPoint(transform.position);
+                            Debug.Log(pos);
+                            GridMap.instance.grid[pos.x, pos.y].unityOrConstructionOnCell = GetComponent<CombatStats>();
+                            Debug.Log(GridMap.instance.grid[pos.x, pos.y].unityOrConstructionOnCell);
+                            moving = false;
+                        }
                     }
+                    moving = false;
                     UnSelect();
                     break;
                 }
@@ -185,7 +206,7 @@ public class PlayerMovement : MonoBehaviour
             case 3:
                 {
                     Debug.Log("Entrar en torre");
-                    cellToGo.unityOrConstructionOnCell.GetComponent<Structures>().SaveUnit(GetComponent<CombatStats>());
+                    cellToGo.unityOrConstructionOnCell.GetComponent<Structures>().SaveUnit(GetComponent<CombatStats>(),0,0);
 
                     break;
                 }
@@ -196,7 +217,7 @@ public class PlayerMovement : MonoBehaviour
 
         }
 
-        if(action != 3)
+        if(action != 3 && action != 1)
         {
             Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(cellToGo.GlobalPosition);
             GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = GetComponent<CombatStats>();
@@ -227,7 +248,17 @@ public class PlayerMovement : MonoBehaviour
 
     public void UnSelect()
     {
-        GetComponent<Units>().SetMovementsAvailable(0);
+        //Vector2Int aux = GridMap.instance.CellCordFromWorldPoint(transform.position);
+        //Debug.Log(GridMap.instance.grid[aux.x, aux.y].unityOrConstructionOnCell);
+
+        if (GetComponent<Units>())
+        {
+            GetComponent<Units>().SetMovementsAvailable(0);
+        }
+        else if (GetComponent<Structures>())
+        {
+            GetComponent<Structures>().SetActionUnavaliable();
+        }
         selected = false;
         construct = false;
         adyacents.Clear();
@@ -247,13 +278,40 @@ public class PlayerMovement : MonoBehaviour
 
     public void ShowAccesibles()
     {
-        byte cont = 0;
-        byte pasos = GetComponent<Units>().GetMovementsAvailable();
-        Cell cellActual = GridMap.instance.CellFromWorldPoint(transform.position);
-        //Debug.Log(cellActual.CellType + "   " + GridMap.instance.CellCordFromWorldPoint(cellActual.GlobalPosition));
-        float size = GridMap.instance.GetCellRadius() * 2;
-        FindAccesibles(cellActual, cont, pasos, size);
-        ShowAreaAccesibles();
+        if (this.GetComponent<Units>())
+        {
+            byte cont = 0;
+            byte pasos = GetComponent<Units>().GetMovementsAvailable();
+            Cell cellActual = GridMap.instance.CellFromWorldPoint(transform.position);
+            //Debug.Log(cellActual.CellType + "   " + GridMap.instance.CellCordFromWorldPoint(cellActual.GlobalPosition));
+            float size = GridMap.instance.GetCellRadius() * 2;
+            FindAccesibles(cellActual, cont, pasos, size);
+            ShowAreaAccesibles();
+        }
+
+        else if (GetComponent<Structures>())
+        {
+            if (GetComponent<Structures>().GetActionAvaliable())
+            {
+                Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(transform.position);
+                for (int i = -2; i < 3; i++)
+                {
+                    for (int j = -2; j < 3; j++)
+                    {
+                        if (coord.x + i >= 0 && coord.x + i < GridMap.instance.GetGridSizeX()
+                            && coord.y + j >= 0 && coord.y + j < GridMap.instance.GetGridSizeY())
+                        {
+                            Cell cellAux = GridMap.instance.CellFromWorldPoint(GridMap.instance.grid[coord.x + i, coord.y + j].GlobalPosition);
+                            adyacents.AddLast(cellAux);
+
+                        }
+                    }
+
+                }
+            }
+
+            ShowAreaAccesibles();
+        }
     }
 
     private void ShowAreaAccesibles()

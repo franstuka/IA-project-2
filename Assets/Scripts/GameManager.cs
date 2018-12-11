@@ -60,7 +60,8 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private int[] playersGold;
     [SerializeField] private byte turn = 1;
     [SerializeField] private int initialGold = 500;
-    [SerializeField] private int baseGoldWin = 25;
+    [SerializeField] private int baseGoldWin = 50;
+    private int minesDigged = 0;
     public List<LinkedList<GameObject>> units;
 
 
@@ -75,6 +76,7 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private GameObject lancerow;
     [SerializeField] private GameObject generalw;
     [SerializeField] private GameObject torrew;
+    [SerializeField] private int currentMoney;
 
 
     private void Start()
@@ -98,8 +100,9 @@ public class GameManager : MonoBehaviour {
 
     public void ChangeTurn()
     {
-        //Debug.Log("Change Turn Player: " + turn);
-        //UpdateGold();
+        Debug.Log("Change Turn Player: " + turn);
+        
+        UpdateGold();
         AddUnits();
 
         if (turn ==  playersNum -1)
@@ -117,23 +120,27 @@ public class GameManager : MonoBehaviour {
             if (node.Value != null)
 
             {
-                if (node.Value.GetComponent<Pawn>() )
-                {
 
-                    node.Value.GetComponent<Pawn>().Work();
-                    
-
-                }
 
                 if (node.Value.GetComponent<Units>())
                 {
                     node.Value.GetComponent<Units>().SetMovementsAvailable(node.Value.GetComponent<Units>().GetMaxMovementsAvaliable());
+
+                    if (node.Value.GetComponent<Pawn>())
+                    {
+                        node.Value.GetComponent<Pawn>().Work();
+                    }
                 }
+                else if (node.Value.GetComponent<Structures>())
+                {
+                    node.Value.GetComponent<Structures>().SetActionAvaliable();
+                }
+
             }
         }
             
 
-        Debug.Log("Change Turn Player: " + turn);
+        //Debug.Log("Change Turn Player: " + turn);
     }
 
     void UpdateGold()
@@ -141,10 +148,19 @@ public class GameManager : MonoBehaviour {
         LinkedListNode<GameObject> node = units[turn].First;
         while(node != null)
         {
+            //Debug.Log("Money");
             if (node.Value.GetComponent<Pawn>() != null && node.Value.GetComponent<Pawn>().GetIsMining())
-                playersGold[turn] += baseGoldWin * node.Value.GetComponent<Pawn>().GetTier();
+            {
+                minesDigged++;
+                Debug.Log(minesDigged);
+                
+            }
             node = node.Next;
         }
+
+        playersGold[turn] += baseGoldWin * minesDigged;
+        Debug.Log(playersGold[turn]);
+        minesDigged = 0;
         //goldText.text = "" + playersGold[turn];
     }
 
@@ -156,7 +172,7 @@ public class GameManager : MonoBehaviour {
     public void ChangeGold(byte goldCost)
     {
         playersGold[turn] -= goldCost;
-        goldText.text = "" + playersGold[turn];
+        //goldText.text = "" + playersGold[turn];
     }
 
     public int GetPlayersGold(byte player)
