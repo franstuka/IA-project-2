@@ -82,9 +82,10 @@ public class Structures : CombatStats {
             List<LinkedList<GameObject>> unitlist = GameManager.instance.GetUnitList();
             //LinkedListNode<GameObject> node = unitlist[unit.GetTeam()].Find(unit.GetComponent<GameObject>());
             Debug.Log(unitlist[unit.GetTeam()].Count);
-            unitlist[unit.GetTeam()].Remove(unit.GetComponent<GameObject>());
+            unitlist[unit.GetTeam()].Remove(unit.gameObject);
             Debug.Log(unitlist[unit.GetTeam()].Count);
-            Destroy(unit.transform.gameObject);
+            Destroy(unit.gameObject);
+
         }
     }
 

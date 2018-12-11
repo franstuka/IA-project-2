@@ -55,6 +55,7 @@ public class Pawn : Units {
             GameObject Tower = Instantiate(tower, new Vector3(workZone.x , 1, workZone.z), Quaternion.identity);
             Vector2Int posTower = GridMap.instance.CellCordFromWorldPoint(Tower.transform.position);
             GridMap.instance.grid[posTower.x, posTower.y].unityOrConstructionOnCell = Tower.GetComponent<CombatStats>() ;
+            GameManager.instance.units[GameManager.instance.GetTurn()].AddLast(Tower);
             workZone = new Vector3();
             GetComponent<PlayerMovement>().UnSelect();
         }

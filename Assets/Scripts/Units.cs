@@ -90,7 +90,7 @@ public class Units : CombatStats {
 
             Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(secondUnit.transform.position);
             GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
-            Destroy(secondUnit.transform.gameObject);
+            Destroy(secondUnit.gameObject);
         }
         
         

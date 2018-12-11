@@ -99,7 +99,7 @@ public class GameManager : MonoBehaviour {
     public void ChangeTurn()
     {
         //Debug.Log("Change Turn Player: " + turn);
-        UpdateGold();
+        //UpdateGold();
         AddUnits();
 
         if (turn ==  playersNum -1)
@@ -113,16 +113,25 @@ public class GameManager : MonoBehaviour {
 
         for (LinkedListNode<GameObject> node = units[turn].First; node != null; node = node.Next)
         {
-            if (node.Value.GetComponent<Pawn>())
-            {
-                node.Value.GetComponent<Pawn>().Work();
-            }
+            //Debug.Log(node.Value.name);
+            if (node.Value != null)
 
-            if (node.Value.GetComponent<Units>())
             {
-                node.Value.GetComponent<Units>().SetMovementsAvailable(node.Value.GetComponent<Units>().GetMaxMovementsAvaliable());
+                if (node.Value.GetComponent<Pawn>() )
+                {
+
+                    node.Value.GetComponent<Pawn>().Work();
+                    
+
+                }
+
+                if (node.Value.GetComponent<Units>())
+                {
+                    node.Value.GetComponent<Units>().SetMovementsAvailable(node.Value.GetComponent<Units>().GetMaxMovementsAvaliable());
+                }
             }
         }
+            
 
         Debug.Log("Change Turn Player: " + turn);
     }

@@ -196,9 +196,14 @@ public class PlayerMovement : MonoBehaviour
 
         }
 
-        Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(cellToGo.GlobalPosition);
-        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = GetComponent<CombatStats>();
-        moving = false;
+        if(action != 3)
+        {
+            Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(cellToGo.GlobalPosition);
+            GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = GetComponent<CombatStats>();
+            moving = false;
+
+        }
+
     }
 
     public bool GetSelected()
