@@ -128,7 +128,10 @@ public class Structures : CombatStats {
     }
     public void GenerateUnit(byte slot, Vector2Int posicion)
     {
-        if (slot > units.Count - 1) {
+        Debug.Log(slot);
+        Debug.Log(slots);
+
+        if (slot < slots) {
 
             LinkedListNode<unitData> node = units.First;
             for (int i = 0; i < slot; i++)
@@ -162,7 +165,23 @@ public class Structures : CombatStats {
                     break;
             }
 
+            Cell cellAux = GridMap.instance.grid[posicion.x, posicion.y];
 
+            GameObject newPiece = Instantiate(piece, cellAux.GlobalPosition, Quaternion.identity);
+            Debug.Log("¡¡STOY VIVIO JOSDEPUTA!!");
+
+            cellAux.unityOrConstructionOnCell = newPiece.GetComponent<CombatStats>();
+            List<LinkedList<GameObject>> list = GameManager.instance.GetUnitList();
+            list[team].AddLast(newPiece);
+
+            newPiece.GetComponent<CombatStats>().SetStats(CombatStatsType.DAMAGE, data.GetUnitMaxDamage());
+            newPiece.GetComponent<CombatStats>().SetStats(CombatStatsType.MAXDAMAGE, data.GetUnitMaxDamage());
+            newPiece.GetComponent<CombatStats>().SetStats(CombatStatsType.FORCE, data.GetUnitForce());
+            newPiece.GetComponent<CombatStats>().SetStats(CombatStatsType.MAXFORCE, data.GetUnitMaxForce());
+            newPiece.GetComponent<CombatStats>().SetStatTier(data.GetUnitTier());
+
+            units.Remove(data);
+            slots--;
         }
     }
 
@@ -207,6 +226,7 @@ public class Structures : CombatStats {
             if (piece)
             {
                 SaveUnit(piece.GetComponent<CombatStats>(), turns, goldToSubstract);
+                Debug.Log("Unidad Creada");
                 // slots++;
 
                 //data = new unitData(piece.GetComponent<CombatStats>().GetUnityType(), piece.GetComponent<CombatStats>().GetTier(), piece.GetComponent<CombatStats>().GetMaxForce(), piece.GetComponent<CombatStats>().GetForce(), piece.GetComponent<CombatStats>().GetMaxDamage(), turns);

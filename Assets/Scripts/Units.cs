@@ -84,7 +84,8 @@ public class Units : CombatStats {
             List<LinkedList<GameObject>> list = GameManager.instance.GetUnitList();
             byte turn = GameManager.instance.GetTurn();
             UpdateUnit(firstUnit, secondUnit);
-            list[turn].Remove(firstUnit.GetComponent<GameObject>());
+            //Debug.Log(list[turn].Find(secondUnit.gameObject));
+            list[turn].Remove(secondUnit.gameObject);
             firstUnit.SetTier();
 
 
@@ -92,9 +93,6 @@ public class Units : CombatStats {
             GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
             Destroy(secondUnit.gameObject);
         }
-        
-        
-
       
     }
 

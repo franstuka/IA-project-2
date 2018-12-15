@@ -6,7 +6,7 @@ public enum UnitType { Caballeria, Peon, Lancero, General, Torre, Castillo };
 
 public class CombatStats : MonoBehaviour {
 
-    public enum CombatStatsType{ MAXFORCE, FORCE, MAXDAMAGE, DAMAGE};
+    public enum CombatStatsType{ MAXFORCE, FORCE, MAXDAMAGE, DAMAGE, TIER};
     public enum UnitType { Caballeria, Peon, Lancero, General, Torre, Castillo };
     [SerializeField] private byte tier = 0;
     [SerializeField] private float Force = 0;
@@ -14,7 +14,7 @@ public class CombatStats : MonoBehaviour {
     [SerializeField] private float MaxDamage = 0;
     [SerializeField] private float Damage;
     [SerializeField] private UnitType Type;
-    [SerializeField] private byte team;
+    [SerializeField] protected byte team;
 
     public Animator anim;
     
@@ -122,6 +122,7 @@ public class CombatStats : MonoBehaviour {
                 }
                 break;
 
+
                 /*case 3:
                     Defense += valor;
                     if (Defense < 0)
@@ -155,6 +156,11 @@ public class CombatStats : MonoBehaviour {
                     Defense = 0;
                 break;*/
         }
+    }
+
+    public void SetStatTier(byte tier)
+    {
+        this.tier = tier;
     }
 
     public virtual void Die()

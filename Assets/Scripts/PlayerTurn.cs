@@ -90,9 +90,52 @@ public class PlayerTurn : MonoBehaviour {
                     Vector2Int aux = findAvaliablePosition();
                     if (aux.x != -1 && aux.y != -1)
                     {
+                        //Debug.Log("¡¡CABRONEEEEES!!");
                         selected.GetComponent<Structures>().GenerateUnit(0, aux);
                     }
                 }
+                if (Input.GetKeyDown("3"))
+                {
+                    Vector2Int aux = findAvaliablePosition();
+                    if (aux.x != -1 && aux.y != -1)
+                    {
+                        //Debug.Log("¡¡CABRONEEEEES!!");
+                        selected.GetComponent<Structures>().GenerateUnit(1, aux);
+                    }
+                }
+                if (Input.GetKeyDown("4"))
+                {
+                    Vector2Int aux = findAvaliablePosition();
+                    if (aux.x != -1 && aux.y != -1)
+                    {
+                        //Debug.Log("¡¡CABRONEEEEES!!");
+                        selected.GetComponent<Structures>().GenerateUnit(2, aux);
+                    }
+                }
+
+                if (Input.GetKeyDown("a"))
+                {
+                    Debug.Log("Crea Peon");
+                    selected.GetComponent<Structures>().CreateUnit(CombatStats.UnitType.Peon,selected);
+                }
+
+                if (Input.GetKeyDown("s"))
+                {
+                    selected.GetComponent<Structures>().CreateUnit(CombatStats.UnitType.Lancero, selected);
+                }
+
+                if (Input.GetKeyDown("d"))
+                {
+                    selected.GetComponent<Structures>().CreateUnit(CombatStats.UnitType.Caballeria, selected);
+
+                }
+
+                if (Input.GetKeyDown("f"))
+                {
+                    selected.GetComponent<Structures>().CreateUnit(CombatStats.UnitType.General, selected);
+
+                }
+
             }
             if (Input.GetKeyDown("t") && selected.GetUnityType() == CombatStats.UnitType.Peon)
             {
@@ -163,7 +206,7 @@ public class PlayerTurn : MonoBehaviour {
                     && coord.y + j >= 0 && coord.y + j < GridMap.instance.GetGridSizeY())
                 {
                     Cell cellAux = GridMap.instance.CellFromWorldPoint(GridMap.instance.grid[coord.x + i, coord.y + j].GlobalPosition);
-                    if (!cellAux.unityOrConstructionOnCell || cellAux.CellType != CellTypes.MOUNTAINS || cellAux.CellType != CellTypes.CASTLE)
+                    if (cellAux.unityOrConstructionOnCell == null && cellAux.CellType != CellTypes.MOUNTAINS && cellAux.CellType != CellTypes.CASTLE)
                     {
                         return GridMap.instance.CellCordFromWorldPoint(cellAux.GlobalPosition);
                     }
