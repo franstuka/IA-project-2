@@ -12,7 +12,7 @@ public struct UnitGroup
 
 public class IAManager : MonoBehaviour {
 
-    public List<float[]> estrategyMapsList;
+    public List<float[,]> estrategyMapsList = new List<float[,]>();
     /* map order:
       0 basic resources
       1 terrain cost
@@ -33,20 +33,15 @@ public class IAManager : MonoBehaviour {
       16 ally exploted resources
       17 enemy exploted resources
       18 relative force
-
-
     */
     public List<UnitGroup> unitGroups;
 
     
-    void Update()
-        {
-        
-        }
-    public void UpdateMaps(){
-        
-        }
 
+    public void UpdateMaps()
+    {
+        
+    }
 }
 
 
