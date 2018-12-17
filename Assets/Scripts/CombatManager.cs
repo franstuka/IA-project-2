@@ -4,13 +4,28 @@ using UnityEngine;
 
 public class CombatManager : MonoBehaviour {
 
+    #region singleton
+    public static CombatManager instance;
+
+    private void Awake()
+    {
+        if (instance != null)
+        {
+            Debug.LogError("More than one instance of grid is trying to active");
+            return;
+        }
+        instance = this;
+        
+    }
+    #endregion
+
     private const float randomincrement = 20;
     private const float advantageincrement = 20;
     private const float cellincrement = 20;
     private const float generalincrement = 50;
     private const byte generalrange = 3;
 
-    void combat(CombatStats attacker, CombatStats defender)
+    public void combat(CombatStats attacker, CombatStats defender)
     {
         float totaldamageA = 0;
         float totaldamageD = 0;
@@ -19,10 +34,11 @@ public class CombatManager : MonoBehaviour {
         Vector2Int defenderpos = GridMap.instance.CellCordFromWorldPoint(defender.transform.position);
 
         totaldamageA += attacker.GetDamage();
-        totaldamageA += (attacker.GetDamage() * randomincrement / 100) * Random.Range(0, 1);
+        totaldamageA += (attacker.GetDamage() * (Random.Range(1, 21)) / 100) ;
 
         totaldamageD += defender.GetDamage();
-        totaldamageD += (defender.GetDamage() * randomincrement / 100) * Random.Range(0, 1);
+        totaldamageD += (attacker.GetDamage() * (Random.Range(1, 21)) / 100);
+
 
         switch (attacker.GetUnityType())
         {
@@ -147,6 +163,7 @@ public class CombatManager : MonoBehaviour {
 
                             case CombatStats.UnitType.Lancero:
                             {
+                                Debug.Log("Hola");
                                 totaldamageA += attacker.GetDamage() * (advantageincrement / 2) / 100;
                                 break;
 
@@ -245,56 +262,51 @@ public class CombatManager : MonoBehaviour {
 
         }
 
+        Debug.Log(GeneralInRange(attacker));
         if (GeneralInRange(attacker))
         {
             totaldamageA += Mathf.FloorToInt((attacker.GetDamage() * generalincrement / 100));
         }
 
-        attackUnity(defender, totaldamageA);
-
         if (GeneralInRange(defender))
         {
             totaldamageD += Mathf.FloorToInt((attacker.GetDamage() * generalincrement / 100));
         }
-
+        
+        attackUnity(defender, totaldamageA);
         attackUnity(attacker, totaldamageD);
+
     }
+
 
     private bool GeneralInRange(CombatStats attacker)
     {
-        Vector2 attackerpos = GridMap.instance.CellCordFromWorldPoint(attacker.transform.position);
-        byte team = GameManager.instance.GetTurn();
- 
-        List<LinkedList<GameObject>> units = GameManager.instance.GetUnitList();
+        Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(attacker.transform.position);
 
-        LinkedListNode<GameObject> unit; 
-
-        for (unit = units[team].First; unit != null; unit = unit.Next)
+        for (int i = -generalrange ; i <= generalrange; i++)
         {
-
-            if (unit.Value.GetComponent<CombatStats>().GetUnityType() == CombatStats.UnitType.General)
+            for (int j = -generalrange; j <= generalrange ; j++)
             {
-                Vector2 generalpos = GridMap.instance.CellCordFromWorldPoint(unit.Value.transform.position);
 
-                if (Mathf.Abs(generalpos[0] - attackerpos[0] ) <= generalrange && Mathf.Abs(generalpos[1] - attackerpos[1]) <= generalrange)
+                if ((0 <= (coord.x + i) && (coord.x + i) < GridMap.instance.GetGridSizeX())
+                    && 0 <= (coord.y + j) && (coord.y + j) < GridMap.instance.GetGridSizeY()
+                    && (i != 0) && (j != 0)) 
                 {
-                    return true;
+                    Debug.Log(GridMap.instance.grid[coord.x + i, coord.y + j].unityOrConstructionOnCell == null);
+                    if (GridMap.instance.grid[coord.x + i, coord.y + j].unityOrConstructionOnCell && GridMap.instance.grid[coord.x + i, coord.y + j].unityOrConstructionOnCell.GetComponent<CombatStats>().GetUnityType() == CombatStats.UnitType.General && GridMap.instance.grid[coord.x + i, coord.y + j].unityOrConstructionOnCell.GetComponent<CombatStats>().GetTeam() == attacker.GetTeam()) 
+                    {
+                     return true;
+                    }
                 }
-
             }
-
-            unit = unit.Next;
-
         }
-
         return false;
+     }
 
-
-    }
     private void attackUnity(CombatStats defender, float totaldamage)
-        {
-            defender.SetForce(totaldamage);
-        }
+    {
+            defender.SetAttack(totaldamage);        
+    }
 
 }
 

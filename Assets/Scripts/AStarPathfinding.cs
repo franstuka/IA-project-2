@@ -12,7 +12,7 @@ public class AStarPathfinding { //By default this is for a quad grid
     private AStarAlgorithmState state;
     private UpdateMode updateMode;
     private const int normalCost = 10;
-    private const int diagonalCost = 14;
+    private const int diagonalCost = 10;
     private const int enemyInSameCellCost = 6;
     private uint maxSteps;
     private uint maxAllowedSteps = 200;
@@ -20,7 +20,8 @@ public class AStarPathfinding { //By default this is for a quad grid
     private Vector2Int endNodePos;
     private Vector2Int startNodePos;
     private Vector2Int lastfinalPos;
-
+    private CombatStats.UnitType unitType;
+    private bool useUnitType = false;
     private int maxX;
     private int maxY;
 
@@ -32,6 +33,7 @@ public class AStarPathfinding { //By default this is for a quad grid
         this.startNodePos = startNodePos;
         maxX = GridMap.instance.GetGridSizeX();
         maxY = GridMap.instance.GetGridSizeY();
+        useUnitType = false;
     }
 
     public AStarPathfinding(Vector2Int startNodePos, Vector2Int endNodePos)
@@ -42,6 +44,19 @@ public class AStarPathfinding { //By default this is for a quad grid
         this.startNodePos = startNodePos;
         maxX = GridMap.instance.GetGridSizeX();
         maxY = GridMap.instance.GetGridSizeY();
+        useUnitType = false;
+    }
+
+    public AStarPathfinding(Vector2Int startNodePos, Vector2Int endNodePos , CombatStats.UnitType unitType)
+    {
+        Heap = new LinkedList<Vector2Int>();
+        updateMode = UpdateMode.ON_TARGET_OR_ORIGIN_MOVE;
+        this.endNodePos = endNodePos;
+        this.startNodePos = startNodePos;
+        maxX = GridMap.instance.GetGridSizeX();
+        maxY = GridMap.instance.GetGridSizeY();
+        this.unitType = unitType;
+        useUnitType = true;
     }
 
     public AStarPathfinding(UpdateMode updateMode)
@@ -599,61 +614,124 @@ public class AStarPathfinding { //By default this is for a quad grid
         #region Stage 2, get minimum and remove cells with 0 adjacents
 
         Vector3Int positionAndMinimum = new Vector3Int(0,0,int.MaxValue);
-        if (x+1 >= 0 && x+1 <= maxX - 1 && y >= 0 && y <= maxY - 1 && GridMap.instance.grid[x + 1, y].Node.visited != true && GridMap.instance.grid[x + 1, y].Node.AvaibleAdjacentNodes != 0)
-        {
-            GridMap.instance.grid[x + 1, y].Node.SetFinalCost(normalCost + fromLastInitialNodeCost);
-            if(GridMap.instance.grid[x + 1, y].Node.NodeFinalCost < positionAndMinimum.z)
-                positionAndMinimum = new Vector3Int(x + 1, y, GridMap.instance.grid[x + 1, y].Node.NodeFinalCost);
-        }
 
-        if (x-1 >= 0 && x-1 <= maxX - 1 && y >= 0 && y <= maxY - 1 && GridMap.instance.grid[x - 1, y].Node.visited != true && GridMap.instance.grid[x - 1, y].Node.AvaibleAdjacentNodes != 0)
+        if(useUnitType)
         {
-            GridMap.instance.grid[x - 1, y].Node.SetFinalCost(normalCost + fromLastInitialNodeCost);
-            if(GridMap.instance.grid[x - 1, y].Node.NodeFinalCost < positionAndMinimum.z)
-                positionAndMinimum = new Vector3Int(x - 1, y, GridMap.instance.grid[x - 1, y].Node.NodeFinalCost);
-        }
+            if (x + 1 >= 0 && x + 1 <= maxX - 1 && y >= 0 && y <= maxY - 1 && GridMap.instance.grid[x + 1, y].Node.visited != true && GridMap.instance.grid[x + 1, y].Node.AvaibleAdjacentNodes != 0 && GridMap.instance.grid[x + 1, y].unityOrConstructionOnCell != null)
+            {
+                GridMap.instance.grid[x + 1, y].Node.SetFinalCost(normalCost * GridMap.instance.grid[x + 1, y].GetMovementCost() + fromLastInitialNodeCost);
+                if (GridMap.instance.grid[x + 1, y].Node.NodeFinalCost < positionAndMinimum.z)
+                    positionAndMinimum = new Vector3Int(x + 1, y, GridMap.instance.grid[x + 1, y].Node.NodeFinalCost);
+            }
 
-        if (x+1 >= 0 && x+1 <= maxX - 1 && y+1 >= 0 && y+1 <= maxY - 1 && GridMap.instance.grid[x + 1, y+1].Node.visited != true && GridMap.instance.grid[x + 1, y +1].Node.AvaibleAdjacentNodes != 0)
-        {
-            GridMap.instance.grid[x + 1, y + 1].Node.SetFinalCost(diagonalCost + fromLastInitialNodeCost);
-            if(GridMap.instance.grid[x + 1, y + 1].Node.NodeFinalCost < positionAndMinimum.z)
-                positionAndMinimum = new Vector3Int(x + 1, y+1, GridMap.instance.grid[x + 1, y+1].Node.NodeFinalCost);
-        }
+            if (x - 1 >= 0 && x - 1 <= maxX - 1 && y >= 0 && y <= maxY - 1 && GridMap.instance.grid[x - 1, y].Node.visited != true && GridMap.instance.grid[x - 1, y].Node.AvaibleAdjacentNodes != 0 && GridMap.instance.grid[x - 1, y].unityOrConstructionOnCell != null)
+            {
+                GridMap.instance.grid[x - 1, y].Node.SetFinalCost(normalCost * GridMap.instance.grid[x - 1, y].GetMovementCost() + fromLastInitialNodeCost);
+                if (GridMap.instance.grid[x - 1, y].Node.NodeFinalCost < positionAndMinimum.z)
+                    positionAndMinimum = new Vector3Int(x - 1, y, GridMap.instance.grid[x - 1, y].Node.NodeFinalCost);
+            }
 
-        if (x-1 >= 0 && x-1 <= maxX - 1 && y-1 >= 0 && y-1 <= maxY - 1 && GridMap.instance.grid[x -1, y-1].Node.visited != true && GridMap.instance.grid[x - 1, y -1].Node.AvaibleAdjacentNodes != 0)
-        {
-            GridMap.instance.grid[x - 1, y - 1].Node.SetFinalCost(diagonalCost + fromLastInitialNodeCost);
-            if(GridMap.instance.grid[x - 1, y - 1].Node.NodeFinalCost < positionAndMinimum.z)
-                positionAndMinimum = new Vector3Int(x - 1, y-1, GridMap.instance.grid[x -1, y-1].Node.NodeFinalCost);
-        }
+            if (x + 1 >= 0 && x + 1 <= maxX - 1 && y + 1 >= 0 && y + 1 <= maxY - 1 && GridMap.instance.grid[x + 1, y + 1].Node.visited != true && GridMap.instance.grid[x + 1, y + 1].Node.AvaibleAdjacentNodes != 0 && GridMap.instance.grid[x + 1, y +1].unityOrConstructionOnCell != null)
+            {
+                GridMap.instance.grid[x + 1, y + 1].Node.SetFinalCost(diagonalCost * GridMap.instance.grid[x + 1, y + 1].GetMovementCost() + fromLastInitialNodeCost);
+                if (GridMap.instance.grid[x + 1, y + 1].Node.NodeFinalCost < positionAndMinimum.z)
+                    positionAndMinimum = new Vector3Int(x + 1, y + 1, GridMap.instance.grid[x + 1, y + 1].Node.NodeFinalCost);
+            }
 
-        if (x+1 >= 0 && x+1 <= maxX - 1 && y-1 >= 0 && y-1 <= maxY - 1 && GridMap.instance.grid[x + 1, y-1].Node.visited != true && GridMap.instance.grid[x + 1, y -1].Node.AvaibleAdjacentNodes != 0)
-        {
-            GridMap.instance.grid[x + 1, y - 1].Node.SetFinalCost(diagonalCost + fromLastInitialNodeCost);
-            if(GridMap.instance.grid[x + 1, y - 1].Node.NodeFinalCost < positionAndMinimum.z)
-                positionAndMinimum = new Vector3Int(x + 1, y-1, GridMap.instance.grid[x + 1, y-1].Node.NodeFinalCost);
-        }
+            if (x - 1 >= 0 && x - 1 <= maxX - 1 && y - 1 >= 0 && y - 1 <= maxY - 1 && GridMap.instance.grid[x - 1, y - 1].Node.visited != true && GridMap.instance.grid[x - 1, y - 1].Node.AvaibleAdjacentNodes != 0 && GridMap.instance.grid[x - 1, y - 1].unityOrConstructionOnCell != null)
+            {
+                GridMap.instance.grid[x - 1, y - 1].Node.SetFinalCost(diagonalCost * GridMap.instance.grid[x - 1, y-1].GetMovementCost() + fromLastInitialNodeCost);
+                if (GridMap.instance.grid[x - 1, y - 1].Node.NodeFinalCost < positionAndMinimum.z)
+                    positionAndMinimum = new Vector3Int(x - 1, y - 1, GridMap.instance.grid[x - 1, y - 1].Node.NodeFinalCost);
+            }
 
-        if (x-1 >= 0 && x-1 <= maxX - 1 && y+1 >= 0 && y+1 <= maxY - 1 && GridMap.instance.grid[x - 1, y +1].Node.visited != true && GridMap.instance.grid[x - 1, y +1].Node.AvaibleAdjacentNodes != 0)
-        {
-            GridMap.instance.grid[x - 1, y + 1].Node.SetFinalCost(diagonalCost + fromLastInitialNodeCost);
-            if(GridMap.instance.grid[x - 1, y + 1].Node.NodeFinalCost < positionAndMinimum.z)
-                positionAndMinimum = new Vector3Int(x - 1, y + 1, GridMap.instance.grid[x - 1, y +1].Node.NodeFinalCost);
-        }
+            if (x + 1 >= 0 && x + 1 <= maxX - 1 && y - 1 >= 0 && y - 1 <= maxY - 1 && GridMap.instance.grid[x + 1, y - 1].Node.visited != true && GridMap.instance.grid[x + 1, y - 1].Node.AvaibleAdjacentNodes != 0 && GridMap.instance.grid[x + 1, y -1].unityOrConstructionOnCell != null)
+            {
+                GridMap.instance.grid[x + 1, y - 1].Node.SetFinalCost(diagonalCost * GridMap.instance.grid[x + 1, y -1].GetMovementCost() + fromLastInitialNodeCost);
+                if (GridMap.instance.grid[x + 1, y - 1].Node.NodeFinalCost < positionAndMinimum.z)
+                    positionAndMinimum = new Vector3Int(x + 1, y - 1, GridMap.instance.grid[x + 1, y - 1].Node.NodeFinalCost);
+            }
 
-        if (x >= 0 && x <= maxX - 1 && y+1 >= 0 && y+1 <= maxY - 1 && GridMap.instance.grid[x, y+1].Node.visited != true && GridMap.instance.grid[x, y +1].Node.AvaibleAdjacentNodes != 0)
-        {
-            GridMap.instance.grid[x, y + 1].Node.SetFinalCost(normalCost + fromLastInitialNodeCost);
-            if(GridMap.instance.grid[x, y + 1].Node.NodeFinalCost < positionAndMinimum.z)
-                positionAndMinimum = new Vector3Int(x, y+1, GridMap.instance.grid[x, y+1].Node.NodeFinalCost);
-        }
+            if (x - 1 >= 0 && x - 1 <= maxX - 1 && y + 1 >= 0 && y + 1 <= maxY - 1 && GridMap.instance.grid[x - 1, y + 1].Node.visited != true && GridMap.instance.grid[x - 1, y + 1].Node.AvaibleAdjacentNodes != 0 && GridMap.instance.grid[x -1, y +1].unityOrConstructionOnCell != null)
+            {
+                GridMap.instance.grid[x - 1, y + 1].Node.SetFinalCost(diagonalCost * GridMap.instance.grid[x - 1, y +1].GetMovementCost() + fromLastInitialNodeCost);
+                if (GridMap.instance.grid[x - 1, y + 1].Node.NodeFinalCost < positionAndMinimum.z)
+                    positionAndMinimum = new Vector3Int(x - 1, y + 1, GridMap.instance.grid[x - 1, y + 1].Node.NodeFinalCost);
+            }
 
-        if (x >= 0 && x <= maxX - 1 && y - 1 >= 0 && y - 1 <= maxY - 1 && GridMap.instance.grid[x, y - 1].Node.visited != true && GridMap.instance.grid[x, y -1].Node.AvaibleAdjacentNodes != 0)
-        {
-            GridMap.instance.grid[x, y - 1].Node.SetFinalCost(normalCost + fromLastInitialNodeCost);
-            if(GridMap.instance.grid[x, y - 1].Node.NodeFinalCost < positionAndMinimum.z)
-                positionAndMinimum = new Vector3Int(x, y - 1, GridMap.instance.grid[x, y - 1].Node.NodeFinalCost);
+            if (x >= 0 && x <= maxX - 1 && y + 1 >= 0 && y + 1 <= maxY - 1 && GridMap.instance.grid[x, y + 1].Node.visited != true && GridMap.instance.grid[x, y + 1].Node.AvaibleAdjacentNodes != 0 && GridMap.instance.grid[x, y + 1].unityOrConstructionOnCell != null)
+            {
+                GridMap.instance.grid[x, y + 1].Node.SetFinalCost(normalCost * GridMap.instance.grid[x, y +1].GetMovementCost() + fromLastInitialNodeCost);
+                if (GridMap.instance.grid[x, y + 1].Node.NodeFinalCost < positionAndMinimum.z)
+                    positionAndMinimum = new Vector3Int(x, y + 1, GridMap.instance.grid[x, y + 1].Node.NodeFinalCost);
+            }
+
+            if (x >= 0 && x <= maxX - 1 && y - 1 >= 0 && y - 1 <= maxY - 1 && GridMap.instance.grid[x, y - 1].Node.visited != true && GridMap.instance.grid[x, y - 1].Node.AvaibleAdjacentNodes != 0 && GridMap.instance.grid[x, y - 1].unityOrConstructionOnCell != null)
+            {
+                GridMap.instance.grid[x, y - 1].Node.SetFinalCost(normalCost * GridMap.instance.grid[x, y -1].GetMovementCost() + fromLastInitialNodeCost);
+                if (GridMap.instance.grid[x, y - 1].Node.NodeFinalCost < positionAndMinimum.z)
+                    positionAndMinimum = new Vector3Int(x, y - 1, GridMap.instance.grid[x, y - 1].Node.NodeFinalCost);
+            }
         }
+        else
+        {
+            if (x + 1 >= 0 && x + 1 <= maxX - 1 && y >= 0 && y <= maxY - 1 && GridMap.instance.grid[x + 1, y].Node.visited != true && GridMap.instance.grid[x + 1, y].Node.AvaibleAdjacentNodes != 0)
+            {
+                GridMap.instance.grid[x + 1, y].Node.SetFinalCost(normalCost + fromLastInitialNodeCost);
+                if (GridMap.instance.grid[x + 1, y].Node.NodeFinalCost < positionAndMinimum.z)
+                    positionAndMinimum = new Vector3Int(x + 1, y, GridMap.instance.grid[x + 1, y].Node.NodeFinalCost);
+            }
+
+            if (x - 1 >= 0 && x - 1 <= maxX - 1 && y >= 0 && y <= maxY - 1 && GridMap.instance.grid[x - 1, y].Node.visited != true && GridMap.instance.grid[x - 1, y].Node.AvaibleAdjacentNodes != 0)
+            {
+                GridMap.instance.grid[x - 1, y].Node.SetFinalCost(normalCost + fromLastInitialNodeCost);
+                if (GridMap.instance.grid[x - 1, y].Node.NodeFinalCost < positionAndMinimum.z)
+                    positionAndMinimum = new Vector3Int(x - 1, y, GridMap.instance.grid[x - 1, y].Node.NodeFinalCost);
+            }
+
+            if (x + 1 >= 0 && x + 1 <= maxX - 1 && y + 1 >= 0 && y + 1 <= maxY - 1 && GridMap.instance.grid[x + 1, y + 1].Node.visited != true && GridMap.instance.grid[x + 1, y + 1].Node.AvaibleAdjacentNodes != 0)
+            {
+                GridMap.instance.grid[x + 1, y + 1].Node.SetFinalCost(diagonalCost + fromLastInitialNodeCost);
+                if (GridMap.instance.grid[x + 1, y + 1].Node.NodeFinalCost < positionAndMinimum.z)
+                    positionAndMinimum = new Vector3Int(x + 1, y + 1, GridMap.instance.grid[x + 1, y + 1].Node.NodeFinalCost);
+            }
+
+            if (x - 1 >= 0 && x - 1 <= maxX - 1 && y - 1 >= 0 && y - 1 <= maxY - 1 && GridMap.instance.grid[x - 1, y - 1].Node.visited != true && GridMap.instance.grid[x - 1, y - 1].Node.AvaibleAdjacentNodes != 0)
+            {
+                GridMap.instance.grid[x - 1, y - 1].Node.SetFinalCost(diagonalCost + fromLastInitialNodeCost);
+                if (GridMap.instance.grid[x - 1, y - 1].Node.NodeFinalCost < positionAndMinimum.z)
+                    positionAndMinimum = new Vector3Int(x - 1, y - 1, GridMap.instance.grid[x - 1, y - 1].Node.NodeFinalCost);
+            }
+
+            if (x + 1 >= 0 && x + 1 <= maxX - 1 && y - 1 >= 0 && y - 1 <= maxY - 1 && GridMap.instance.grid[x + 1, y - 1].Node.visited != true && GridMap.instance.grid[x + 1, y - 1].Node.AvaibleAdjacentNodes != 0)
+            {
+                GridMap.instance.grid[x + 1, y - 1].Node.SetFinalCost(diagonalCost + fromLastInitialNodeCost);
+                if (GridMap.instance.grid[x + 1, y - 1].Node.NodeFinalCost < positionAndMinimum.z)
+                    positionAndMinimum = new Vector3Int(x + 1, y - 1, GridMap.instance.grid[x + 1, y - 1].Node.NodeFinalCost);
+            }
+
+            if (x - 1 >= 0 && x - 1 <= maxX - 1 && y + 1 >= 0 && y + 1 <= maxY - 1 && GridMap.instance.grid[x - 1, y + 1].Node.visited != true && GridMap.instance.grid[x - 1, y + 1].Node.AvaibleAdjacentNodes != 0)
+            {
+                GridMap.instance.grid[x - 1, y + 1].Node.SetFinalCost(diagonalCost + fromLastInitialNodeCost);
+                if (GridMap.instance.grid[x - 1, y + 1].Node.NodeFinalCost < positionAndMinimum.z)
+                    positionAndMinimum = new Vector3Int(x - 1, y + 1, GridMap.instance.grid[x - 1, y + 1].Node.NodeFinalCost);
+            }
+
+            if (x >= 0 && x <= maxX - 1 && y + 1 >= 0 && y + 1 <= maxY - 1 && GridMap.instance.grid[x, y + 1].Node.visited != true && GridMap.instance.grid[x, y + 1].Node.AvaibleAdjacentNodes != 0)
+            {
+                GridMap.instance.grid[x, y + 1].Node.SetFinalCost(normalCost + fromLastInitialNodeCost);
+                if (GridMap.instance.grid[x, y + 1].Node.NodeFinalCost < positionAndMinimum.z)
+                    positionAndMinimum = new Vector3Int(x, y + 1, GridMap.instance.grid[x, y + 1].Node.NodeFinalCost);
+            }
+
+            if (x >= 0 && x <= maxX - 1 && y - 1 >= 0 && y - 1 <= maxY - 1 && GridMap.instance.grid[x, y - 1].Node.visited != true && GridMap.instance.grid[x, y - 1].Node.AvaibleAdjacentNodes != 0)
+            {
+                GridMap.instance.grid[x, y - 1].Node.SetFinalCost(normalCost + fromLastInitialNodeCost);
+                if (GridMap.instance.grid[x, y - 1].Node.NodeFinalCost < positionAndMinimum.z)
+                    positionAndMinimum = new Vector3Int(x, y - 1, GridMap.instance.grid[x, y - 1].Node.NodeFinalCost);
+            }
+        }
+        
 
         #endregion
 

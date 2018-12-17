@@ -52,4 +52,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goldText: {fileID: 0}
-  goldIncomeIncrement: 0
+  playersNum: 2
+  playersGold: 
+  turn: 0
+  initialGold: 500
+  baseGoldWin: 25
+  peon: {fileID: 1437362888727348, guid: 96ade03d26e955e4f8281b8238032f21, type: 2}
+  caballero: {fileID: 0}
+  lancero: {fileID: 0}
+  general: {fileID: 0}
+  torre: {fileID: 0}
+  peonw: {fileID: 0}
+  caballerow: {fileID: 0}
+  lancerow: {fileID: 0}
+  generalw: {fileID: 0}
+  torrew: {fileID: 0}
