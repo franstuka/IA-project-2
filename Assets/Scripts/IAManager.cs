@@ -254,14 +254,10 @@ public class IAManager : MonoBehaviour {
                         {
                             Gizmos.color = new Color(0.5f,0.5f,0.5f, 1);
                         }
-
-                        
                     }
-                    
                     Gizmos.DrawCube(GridMap.instance.grid[i, j].GlobalPosition, Vector3.one * (GridMap.instance.GetCellRadius() * 2 * 19 / 20));
                 }
             }
-            Debug.Log(maxCost + " " + minCost);
         }
     }
 }
