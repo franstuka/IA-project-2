@@ -73,9 +73,10 @@ public class IAManager : MonoBehaviour {
         decayMapDistanceInCells = Mathf.FloorToInt(decayMapDistance / (GridMap.instance.GetCellRadius() * 2f)) +1;
         //Set static maps
         SetBetterPositionGeneralMap();
+        SetRelativeForceMap();
     }
 
-    public void SetResourcesMap()
+    public void SetResourcesMap() //called from ScenarioGenerator after scenario has been created
     {
         for (int i = 0; i < GridMap.instance.GetGridSizeX(); i++)
         {
@@ -97,6 +98,7 @@ public class IAManager : MonoBehaviour {
 
     private void SetBetterPositionGeneralMap()
     {
+        estrategyMapsList[10] = new float[GridMap.instance.GetGridSizeX(), GridMap.instance.GetGridSizeY()];
         List<LinkedList<GameObject>> units = GameManager.instance.GetUnitList();
         LinkedListNode<GameObject> unitsList = units[IAPlayer].First;
         int i, j;
@@ -117,14 +119,67 @@ public class IAManager : MonoBehaviour {
         }
     }
 
+    private void SetRelativeForceMap()
+    {
+        estrategyMapsList[18] = new float[GridMap.instance.GetGridSizeX(), GridMap.instance.GetGridSizeY()];
+        List<LinkedList<GameObject>> units = GameManager.instance.GetUnitList();
+        LinkedListNode<GameObject> unitsList = units[IAPlayer].First;
+        int i, j;
+        float factor;
+        for (; unitsList != null; unitsList = unitsList.Next)
+        {
+            if(unitsList.Value.GetComponent<Units>() != null)
+            {
+                i = GridMap.instance.CellCordFromWorldPoint(unitsList.Value.transform.position).x;
+                j = GridMap.instance.CellCordFromWorldPoint(unitsList.Value.transform.position).y;
+                for (int x = i - decayMapDistanceInCells >= 0 ? i - decayMapDistanceInCells : 0; x < GridMap.instance.GetGridSizeX() && x < i + decayMapDistanceInCells; x++)
+                {
+                    for (int y = j - decayMapDistanceInCells >= 0 ? j - decayMapDistanceInCells : 0; y < GridMap.instance.GetGridSizeY() && y < j + decayMapDistanceInCells; y++)
+                    {
+                        factor = Vector3.Distance(GridMap.instance.grid[i, j].GlobalPosition, GridMap.instance.grid[x, y].GlobalPosition) <= GridMap.instance.GetCellRadius() * 2 * unitsList.Value.GetComponent<Units>().GetMaxMovementsAvaliable() ?
+                             unitsList.Value.GetComponent<CombatStats>().GetForce() : unitsList.Value.GetComponent<CombatStats>().GetForce() / Mathf.Pow(1 + Vector3.Distance(GridMap.instance.grid[i, j].GlobalPosition, GridMap.instance.grid[x, y].GlobalPosition) - GridMap.instance.GetCellRadius() * 2 * unitsList.Value.GetComponent<Units>().GetMaxMovementsAvaliable(), 2);
+                        estrategyMapsList[18].SetValue((float)estrategyMapsList[18].GetValue(x, y) + factor, x, y);
+                    }
+                }
+            }
+            
+        }
+        unitsList = IAPlayer == 0? units[1].First : units[0].First;
+        for (; unitsList != null; unitsList = unitsList.Next)
+        {
+            if (unitsList.Value.GetComponent<Units>() != null)
+            {
+                i = GridMap.instance.CellCordFromWorldPoint(unitsList.Value.transform.position).x;
+                j = GridMap.instance.CellCordFromWorldPoint(unitsList.Value.transform.position).y;
+                for (int x = i - decayMapDistanceInCells >= 0 ? i - decayMapDistanceInCells : 0; x < GridMap.instance.GetGridSizeX() && x < i + decayMapDistanceInCells; x++)
+                {
+                    for (int y = j - decayMapDistanceInCells >= 0 ? j - decayMapDistanceInCells : 0; y < GridMap.instance.GetGridSizeY() && y < j + decayMapDistanceInCells; y++)
+                    {
+                        factor = Vector3.Distance(GridMap.instance.grid[i, j].GlobalPosition, GridMap.instance.grid[x, y].GlobalPosition) <= GridMap.instance.GetCellRadius() * 2 * unitsList.Value.GetComponent<Units>().GetMaxMovementsAvaliable() ?
+                            -unitsList.Value.GetComponent<CombatStats>().GetForce() : -unitsList.Value.GetComponent<CombatStats>().GetForce() / Mathf.Pow(1 + Vector3.Distance(GridMap.instance.grid[i, j].GlobalPosition, GridMap.instance.grid[x, y].GlobalPosition) - GridMap.instance.GetCellRadius() * 2 * unitsList.Value.GetComponent<Units>().GetMaxMovementsAvaliable(), 2);
+                        estrategyMapsList[18].SetValue((float)estrategyMapsList[18].GetValue(x, y) + factor, x, y);
+                    }
+                }
+            }
+        }
+    }
+
     public void UpdateMaps()
     {
+        SetBetterPositionGeneralMap();
+        SetRelativeForceMap();
         
+    }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Alpha0))
+            UpdateMaps();
     }
 
     private void OnDrawGizmos()
     {
-        if(debugView != DebugView.nothing)
+        if(debugView != DebugView.nothing && debugView != DebugView.relative_force)
         {
             float maxCost = float.MinValue;
             float minCost = float.MaxValue;
@@ -152,6 +207,54 @@ public class IAManager : MonoBehaviour {
                         Gizmos.color = new Color((float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) / maxCost, (float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) / maxCost, (float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) / maxCost, 1); ;
                     }
 
+                    Gizmos.DrawCube(GridMap.instance.grid[i, j].GlobalPosition, Vector3.one * (GridMap.instance.GetCellRadius() * 2 * 19 / 20));
+                }
+            }
+        }
+        else if(debugView == DebugView.relative_force)
+        {
+            float maxCost = float.MinValue;
+            float minCost = float.MaxValue;
+            float costDiference;
+            foreach (float n in estrategyMapsList[(int)debugView - 1])
+            {
+                if (maxCost < n)
+                {
+                    maxCost = n;
+                }
+                else if (minCost > n)
+                {
+                    minCost = n;
+                }
+            }
+            costDiference = maxCost - minCost;
+            for (int i = 0; i < GridMap.instance.GetGridSizeX(); i++)
+            {
+                for (int j = 0; j < GridMap.instance.GetGridSizeY(); j++)
+                {
+                    if ((float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) == float.MaxValue)
+                    {
+                        Gizmos.color = Color.white;
+                    }
+                    else if ((float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) == float.MinValue)
+                    {
+                        Gizmos.color = Color.black;
+                    }
+                    else
+                    {
+                        if((float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) > 0f)
+                        {
+                            Gizmos.color = new Color((float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) / (costDiference * 2) +0.5f, (float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) / (costDiference * 2) + 0.5f, (float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) / (costDiference * 2) + 0.5f, 1); 
+                        }
+                        else if((float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) < 0f)
+                        {
+                            Gizmos.color = new Color(0.5f +(float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) / (costDiference * 2), 0.5f + (float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) / (costDiference * 2), 0.5f + (float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) / (costDiference * 2) , 1);
+                        }
+                        else
+                        {
+                            Gizmos.color = new Color(0.5f,0.5f,0.5f, 1);
+                        }
+                    }
                     Gizmos.DrawCube(GridMap.instance.grid[i, j].GlobalPosition, Vector3.one * (GridMap.instance.GetCellRadius() * 2 * 19 / 20));
                 }
             }
