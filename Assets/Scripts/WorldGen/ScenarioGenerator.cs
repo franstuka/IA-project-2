@@ -245,7 +245,6 @@ public class ScenarioGenerator : MonoBehaviour {
 
         byte distanceXToRemove = (byte)Mathf.CeilToInt(BordersMineSecureZone * numCellsX);
         byte distanceYToRemove = (byte)Mathf.CeilToInt(BordersMineSecureZone * numCellsY);
-        Debug.Log(distanceXToRemove + " " + distanceYToRemove);
         //up x zone
         for (int i = 0; i < distanceXToRemove; i++)
         {
@@ -609,7 +608,6 @@ public class ScenarioGenerator : MonoBehaviour {
         #endregion
 
         #region Draw mines and expand near
-        Debug.Log(minesPosition.Count);
         Vector2Int newMineValue;
         for (int i = 0; i < minesPosition.Count; i++)
         {
