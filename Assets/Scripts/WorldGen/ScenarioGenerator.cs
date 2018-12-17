@@ -46,6 +46,7 @@ public class ScenarioGenerator : MonoBehaviour {
     private void Start()
     {
         CreateScenatio();
+        IAManager.instance.SetResourcesMap();
     }
 
     private void Update()

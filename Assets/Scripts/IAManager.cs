@@ -15,6 +15,22 @@ public struct UnitGroup
 
 public class IAManager : MonoBehaviour {
 
+    #region singleton
+
+    public static IAManager instance;
+
+    private void Awake()
+    {
+        if (instance != null)
+        {
+            Debug.LogError("More than one instance of grid is trying to active");
+            return;
+        }
+        instance = this;
+    }
+
+    #endregion
+
     public List<float[,]> estrategyMapsList;
     /* map order:
       0 basic resources
@@ -56,11 +72,10 @@ public class IAManager : MonoBehaviour {
             : GridMap.instance.GetGridSizeY() * decayMapDistancePerc * GridMap.instance.GetCellRadius() * 2;
         decayMapDistanceInCells = Mathf.FloorToInt(decayMapDistance / (GridMap.instance.GetCellRadius() * 2f)) +1;
         //Set static maps
-        SetResourcesMap();
         SetBetterPositionGeneralMap();
     }
 
-    private void SetResourcesMap()
+    public void SetResourcesMap()
     {
         for (int i = 0; i < GridMap.instance.GetGridSizeX(); i++)
         {
@@ -109,11 +124,11 @@ public class IAManager : MonoBehaviour {
 
     private void OnDrawGizmos()
     {
-        if((int)debugView != 0)
+        if(debugView != DebugView.nothing)
         {
             float maxCost = float.MinValue;
             float minCost = float.MaxValue;
-            foreach (float n in estrategyMapsList[(int)debugView + 1])
+            foreach (float n in estrategyMapsList[(int)debugView - 1])
             {
                 if (maxCost < n)
                 {
@@ -128,13 +143,13 @@ public class IAManager : MonoBehaviour {
             {
                 for (int j = 0; j < GridMap.instance.GetGridSizeY(); j++)
                 {
-                    if ((float)estrategyMapsList[(int)debugView + 1].GetValue(i, j) == float.MaxValue)
+                    if ((float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) == float.MaxValue)
                     {
                         Gizmos.color = Color.black;
                     }
                     else
                     {
-                        Gizmos.color = new Color((float)estrategyMapsList[(int)debugView + 1].GetValue(i, j) / maxCost, (float)estrategyMapsList[(int)debugView + 1].GetValue(i, j) / maxCost, (float)estrategyMapsList[(int)debugView + 1].GetValue(i, j) / maxCost, 1); ;
+                        Gizmos.color = new Color((float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) / maxCost, (float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) / maxCost, (float)estrategyMapsList[(int)debugView - 1].GetValue(i, j) / maxCost, 1); ;
                     }
 
                     Gizmos.DrawCube(GridMap.instance.grid[i, j].GlobalPosition, Vector3.one * (GridMap.instance.GetCellRadius() * 2 * 19 / 20));
