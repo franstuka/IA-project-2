@@ -128,8 +128,8 @@ public class Structures : CombatStats {
     }
     public void GenerateUnit(byte slot, Vector2Int posicion)
     {
-        Debug.Log(slot);
-        Debug.Log(slots);
+        //Debug.Log(slot);
+        //Debug.Log(slots);
 
         if (slot < slots) {
 
@@ -168,7 +168,7 @@ public class Structures : CombatStats {
             Cell cellAux = GridMap.instance.grid[posicion.x, posicion.y];
 
             GameObject newPiece = Instantiate(piece, cellAux.GlobalPosition, Quaternion.identity);
-            Debug.Log("¡¡STOY VIVIO JOSDEPUTA!!");
+            //Debug.Log("¡¡STOY VIVIO JOSDEPUTA!!");
 
             cellAux.unityOrConstructionOnCell = newPiece.GetComponent<CombatStats>();
             List<LinkedList<GameObject>> list = GameManager.instance.GetUnitList();

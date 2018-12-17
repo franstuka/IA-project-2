@@ -167,7 +167,11 @@ public class CombatStats : MonoBehaviour {
     {
         Vector2Int aux = GridMap.instance.CellCordFromWorldPoint(transform.position);
         GridMap.instance.grid[aux.x, aux.y].unityOrConstructionOnCell = null;
-        Destroy(transform.gameObject);
+        List<LinkedList<GameObject>> units = GameManager.instance.GetUnitList();
+        Debug.Log(units[gameObject.GetComponent<CombatStats>().team].Count);
+        units[gameObject.GetComponent<CombatStats>().team].Remove(gameObject);
+        Debug.Log(units[gameObject.GetComponent<CombatStats>().team].Count);
+        Destroy(gameObject);
     }
 
     public byte GetTier()

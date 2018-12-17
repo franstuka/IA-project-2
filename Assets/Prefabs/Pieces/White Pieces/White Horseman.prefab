@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 114470959830035050}
   - component: {fileID: 54085224151966692}
   - component: {fileID: 65388994971000252}
+  - component: {fileID: 114035072850573776}
   m_Layer: 0
   m_Name: White Horseman
   m_TagString: Untagged
@@ -508,6 +509,32 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114035072850573776
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1046960430172304}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f42df66950fd5143afca2f62f286b2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tier: 0
+  Force: 60
+  MaxForce: 60
+  MaxDamage: 40
+  Damage: 40
+  Type: 0
+  team: 0
+  anim: {fileID: 0}
+  DoDamageSound: {fileID: 0}
+  GetDamageSound: {fileID: 0}
+  DieSound: {fileID: 0}
+  maxMovementsAvailable: 0
+  movementsAvailable: 0
+  forceIncrement: 0.9
+  damageIncrement: 0.9
 --- !u!114 &114055075505397564
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -521,7 +548,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nav: {fileID: 0}
   selected: 0
-  area: {fileID: 0}
+  area: {fileID: 1445762561626958, guid: 36d44f68310271742b31c36bd54efe24, type: 2}
   construct: 0
 --- !u!114 &114470959830035050
 MonoBehaviour:

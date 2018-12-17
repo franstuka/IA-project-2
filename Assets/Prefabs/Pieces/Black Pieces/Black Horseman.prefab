@@ -541,10 +541,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tier: 0
-  Force: 0
-  MaxForce: 0
-  MaxDamage: 0
-  Damage: 0
+  Force: 60
+  MaxForce: 603
+  MaxDamage: 40
+  Damage: 40
   Type: 0
   team: 1
   anim: {fileID: 0}
@@ -568,5 +568,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nav: {fileID: 0}
   selected: 0
-  area: {fileID: 0}
+  area: {fileID: 1445762561626958, guid: 36d44f68310271742b31c36bd54efe24, type: 2}
   construct: 0

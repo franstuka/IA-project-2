@@ -27,7 +27,9 @@ public class GameManager : MonoBehaviour {
         ///////////////////// 
         int name = 0;
 
-        Vector3 posicion = GridMap.instance.grid[1, 0].GlobalPosition;
+        //Peones Negros
+
+        Vector3 posicion = GridMap.instance.grid[15, 19].GlobalPosition;
         GameObject Peon = Instantiate(peon, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
         Peon.name = "Peon" + name;
         name++;
@@ -36,7 +38,7 @@ public class GameManager : MonoBehaviour {
         Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(Peon.transform.position);
         GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = Peon.GetComponent<CombatStats>();
 
-        Vector3 posicion2 = GridMap.instance.grid[1, 1].GlobalPosition;
+        Vector3 posicion2 = GridMap.instance.grid[16, 18].GlobalPosition;
         GameObject Peon2 = Instantiate(peon, new Vector3(posicion2.x, 1, posicion2.z), Quaternion.identity);
         Peon2.name = "Peon" + name;
         units[1].AddLast(Peon2);
@@ -44,13 +46,270 @@ public class GameManager : MonoBehaviour {
         Vector2Int coord2 = GridMap.instance.CellCordFromWorldPoint(Peon2.transform.position);
         GridMap.instance.grid[coord2.x, coord2.y].unityOrConstructionOnCell = Peon2.GetComponent<CombatStats>();
 
-        Vector3 posicion3 = GridMap.instance.grid[0, 0].GlobalPosition;
+        //3
+        posicion = GridMap.instance.grid[8, 15].GlobalPosition;
+        Peon = Instantiate(peon, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+        units[1].AddLast(Peon);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(Peon.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = Peon.GetComponent<CombatStats>();
+
+        //4
+
+        posicion = GridMap.instance.grid[7, 15].GlobalPosition;
+        Peon = Instantiate(peon, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+        units[1].AddLast(Peon);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(Peon.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = Peon.GetComponent<CombatStats>();
+
+        //Torre Negra
+        //1
+
+        posicion = GridMap.instance.grid[15, 18].GlobalPosition;
+        GameObject TorreN = Instantiate(torre, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+        units[1].AddLast(TorreN);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(TorreN.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = TorreN.GetComponent<CombatStats>();
+
+        //2
+        posicion = GridMap.instance.grid[21, 7].GlobalPosition;
+        TorreN = Instantiate(torre, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[1].AddLast(TorreN);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(TorreN.transform.position);
+
+        //3
+
+        posicion = GridMap.instance.grid[17, 7].GlobalPosition;
+        TorreN = Instantiate(torre, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[1].AddLast(TorreN);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(TorreN.transform.position);
+
+        //4
+
+        posicion = GridMap.instance.grid[21, 11].GlobalPosition;
+        TorreN = Instantiate(torre, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[1].AddLast(TorreN);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(TorreN.transform.position);
+
+        //5
+
+        posicion = GridMap.instance.grid[17, 11].GlobalPosition;
+        TorreN = Instantiate(torre, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[1].AddLast(TorreN);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(TorreN.transform.position);
+
+        //Caballos Negros
+        //1
+
+        posicion = GridMap.instance.grid[16, 25].GlobalPosition;
+        GameObject CaballeroN = Instantiate(caballero, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[1].AddLast(CaballeroN);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(CaballeroN.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = CaballeroN.GetComponent<CombatStats>();
+        //2
+
+        posicion = GridMap.instance.grid[17, 25].GlobalPosition;
+        CaballeroN = Instantiate(caballero, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[1].AddLast(CaballeroN);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(CaballeroN.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = CaballeroN.GetComponent<CombatStats>();
+        //3
+
+        posicion = GridMap.instance.grid[18, 25].GlobalPosition;
+        CaballeroN = Instantiate(caballero, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[1].AddLast(CaballeroN);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(CaballeroN.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = CaballeroN.GetComponent<CombatStats>();
+
+        //Lancero Negros
+        //1
+        posicion = GridMap.instance.grid[18, 23].GlobalPosition;
+        GameObject LanceroN = Instantiate(lancero, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[1].AddLast(LanceroN);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(LanceroN.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = LanceroN.GetComponent<CombatStats>();
+
+        //2
+
+        posicion = GridMap.instance.grid[16, 23].GlobalPosition;
+        LanceroN = Instantiate(lancero, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[1].AddLast(LanceroN);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(LanceroN.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = LanceroN.GetComponent<CombatStats>();
+
+        //Generales Negros
+        //1
+
+        posicion = GridMap.instance.grid[17, 17].GlobalPosition;
+        GameObject GeneralN = Instantiate(general, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[1].AddLast(GeneralN);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(GeneralN.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = GeneralN.GetComponent<CombatStats>();
+
+        //Peones Blancos
+        //1
+        Vector3 posicion3 = GridMap.instance.grid[17, 45].GlobalPosition;
         GameObject Peon3 = Instantiate(peonw, new Vector3(posicion3.x, 1, posicion3.z), Quaternion.identity);
 
-        units[0].AddLast(Peon3);
+        units[1].AddLast(Peon3);
 
         Vector2Int coord3 = GridMap.instance.CellCordFromWorldPoint(Peon3.transform.position);
         GridMap.instance.grid[coord3.x, coord3.y].unityOrConstructionOnCell = Peon3.GetComponent<CombatStats>();
+        //2
+        posicion3 = GridMap.instance.grid[19, 45].GlobalPosition;
+        Peon3 = Instantiate(peonw, new Vector3(posicion3.x, 1, posicion3.z), Quaternion.identity);
+
+        units[1].AddLast(Peon3);
+
+        coord3 = GridMap.instance.CellCordFromWorldPoint(Peon3.transform.position);
+
+        // Caballeros Blancos
+
+        //1
+        posicion = GridMap.instance.grid[4, 20].GlobalPosition;
+        GameObject Caballero = Instantiate(caballerow, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[0].AddLast(Caballero);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(Caballero.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = Caballero.GetComponent<CombatStats>();
+
+        //2
+        posicion = GridMap.instance.grid[15,17].GlobalPosition;
+        Caballero = Instantiate(caballerow, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[0].AddLast(Caballero);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(Caballero.transform.position);
+        Debug.Log(coord);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = Caballero.GetComponent<CombatStats>();
+
+        //3
+        posicion = GridMap.instance.grid[15, 43].GlobalPosition;
+        Caballero = Instantiate(caballerow, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[0].AddLast(Caballero);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(Caballero.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = Caballero.GetComponent<CombatStats>();
+
+        //Lanceros Blancos
+        //1
+        posicion = GridMap.instance.grid[15, 16].GlobalPosition;
+        GameObject Lancero = Instantiate(lancerow, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[0].AddLast(Lancero);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(Lancero.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = Lancero.GetComponent<CombatStats>();
+
+        //2
+
+        posicion = GridMap.instance.grid[16, 35].GlobalPosition;
+        Lancero = Instantiate(lancerow, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[0].AddLast(Lancero);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(Lancero.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = Lancero.GetComponent<CombatStats>();
+        //3
+
+        posicion = GridMap.instance.grid[20, 35].GlobalPosition;
+        Lancero = Instantiate(lancerow, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[0].AddLast(Lancero);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(Lancero.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = Lancero.GetComponent<CombatStats>();
+
+        //4
+
+        posicion = GridMap.instance.grid[19, 35].GlobalPosition;
+        Lancero = Instantiate(lancerow, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[0].AddLast(Lancero);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(Lancero.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = Lancero.GetComponent<CombatStats>();
+
+        //General Blanco
+        //1
+
+        posicion = GridMap.instance.grid[18, 45].GlobalPosition;
+        GameObject General = Instantiate(generalw, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[0].AddLast(General);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(General.transform.position);
+        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = General.GetComponent<CombatStats>();
+
+        //Torres Blancas
+        //1
+
+        posicion = GridMap.instance.grid[20, 45].GlobalPosition;
+        GameObject Torre = Instantiate(torrew, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[0].AddLast(Torre);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(Torre.transform.position);
+
+        //2
+
+        posicion = GridMap.instance.grid[21, 48].GlobalPosition;
+        Torre = Instantiate(torrew, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[0].AddLast(Torre);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(Torre.transform.position);
+
+        //3
+
+        posicion = GridMap.instance.grid[17, 48].GlobalPosition;
+        Torre = Instantiate(torrew, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[0].AddLast(Torre);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(Torre.transform.position);
+
+        //4
+
+        posicion = GridMap.instance.grid[21, 52].GlobalPosition;
+        Torre = Instantiate(torrew, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[0].AddLast(Torre);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(Torre.transform.position);
+
+        //5
+
+        posicion = GridMap.instance.grid[17, 52].GlobalPosition;
+        Torre = Instantiate(torrew, new Vector3(posicion.x, 1, posicion.z), Quaternion.identity);
+
+        units[0].AddLast(Torre);
+
+        coord = GridMap.instance.CellCordFromWorldPoint(Torre.transform.position);
 
     }
     #endregion
