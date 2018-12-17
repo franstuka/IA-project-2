@@ -308,6 +308,11 @@ public class CombatManager : MonoBehaviour {
             defender.SetAttack(totaldamage);        
     }
 
+    public int GetGeneralRange()
+    {
+        return generalrange;
+    }
+
 }
 
 
