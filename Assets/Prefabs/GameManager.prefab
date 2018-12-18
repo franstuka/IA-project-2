@@ -20,6 +20,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4246543020489600}
   - component: {fileID: 114516913740723720}
+  - component: {fileID: 114129790790660294}
+  - component: {fileID: 114438272167262282}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -40,6 +42,29 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114129790790660294
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1827528221282208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d0dad7637484a648b427a18091f001b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selected: {fileID: 0}
+--- !u!114 &114438272167262282
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1827528221282208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1cf9b627e11fed04b96114a9037f1f0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114516913740723720
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -58,12 +83,13 @@ MonoBehaviour:
   initialGold: 500
   baseGoldWin: 25
   peon: {fileID: 1437362888727348, guid: 96ade03d26e955e4f8281b8238032f21, type: 2}
-  caballero: {fileID: 0}
-  lancero: {fileID: 0}
-  general: {fileID: 0}
-  torre: {fileID: 0}
-  peonw: {fileID: 0}
-  caballerow: {fileID: 0}
-  lancerow: {fileID: 0}
-  generalw: {fileID: 0}
-  torrew: {fileID: 0}
+  caballero: {fileID: 1077814197357278, guid: a994e73772769c74099074f520815d57, type: 2}
+  lancero: {fileID: 1343074871687160, guid: 6da86310dbe5a114cbdfc522afd4a7d9, type: 2}
+  general: {fileID: 1550707335732298, guid: 656964943c88f584c8cfb47e95dbb1cd, type: 2}
+  torre: {fileID: 1111153767849302, guid: 7362dfd71dc299e4e86d6f065e2f1449, type: 2}
+  peonw: {fileID: 1797173294165122, guid: 0db6c9a3445800a439de91cd6ebd1cb0, type: 2}
+  caballerow: {fileID: 1046960430172304, guid: b08c14f8f6289a24da80d2cf497ee515, type: 2}
+  lancerow: {fileID: 1205724348554290, guid: db1450b0a923e3140a3583f2a9b6075a, type: 2}
+  generalw: {fileID: 1945805229888442, guid: 2ab7232d5f06bf447b85a9393e66404a, type: 2}
+  torrew: {fileID: 1305849610943784, guid: 87297deaa01621f48b200bfd1352610c, type: 2}
+  currentMoney: 0

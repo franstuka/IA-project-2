@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     private LinkedList<Cell> adyacents;
     private LinkedList<GameObject> areas;
     private bool moving = false;
+    [SerializeField] private bool construct = false;
 
     private void Awake()
     {
@@ -30,8 +31,10 @@ public class PlayerMovement : MonoBehaviour
     void Update () {
         //Debug.Log(moving);
 
-        if (selected && moving != true)
+        if (selected && moving != true && construct == false)
         {
+            //Debug.Log(this.name);
+            //Debug.Log(this == null);
             if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit hit;
@@ -42,20 +45,27 @@ public class PlayerMovement : MonoBehaviour
                     Cell cellAux = GridMap.instance.CellFromWorldPoint(hit.point);
                     //Debug.Log(adyacents.Contains(cellAux));
                     if (adyacents.Contains(cellAux)) {
-                        if (cellAux.unityOrConstructionOnCell && (cellAux.unityOrConstructionOnCell.GetTeam() != GetComponent<CombatStats>().GetTeam() || cellAux.unityOrConstructionOnCell.GetUnityType() != GetComponent<CombatStats>().GetUnityType()))
+                        if (cellAux.unityOrConstructionOnCell && (cellAux.unityOrConstructionOnCell.GetTeam() != GetComponent<CombatStats>().GetTeam())) // cellAux.unityOrConstructionOnCell.GetUnityType() != GetComponent<CombatStats>().GetUnityType()))
                         {
                             //nav.SetDestinationPlayer(cellAux.GlobalPosition);
-                            LinkedList<Vector2Int> aux = nav.GetSavedPath();
+                            LinkedList<Vector2Int> aux = nav.GetPath(cellAux.GlobalPosition);
+
                             byte pasos = 0;
                             for (LinkedListNode<Vector2Int> auxNode = aux.First; auxNode != null; auxNode = auxNode.Next)
                             {
-                                pasos += GridMap.instance.grid[auxNode.Value.x, auxNode.Value.y].GetMovementCost(); 
+                                pasos += GridMap.instance.grid[auxNode.Value.x, auxNode.Value.y].GetMovementCost();
                             }
 
-                            GetComponent<Units>().SetMovementsAvailable((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
+                            //GetComponent<Units>().SetMovementsAvailable((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
 
-                            Debug.Log(aux.Count);
+                            //Debug.Log(aux.Count);
                             aux.RemoveLast();
+                            Cell cellPrevAux = null;
+                            if (aux.Count != 0)
+                            {
+                                cellPrevAux = GridMap.instance.grid[aux.Last.Value.x, aux.Last.Value.y];
+                            }
+
 
                             if (cellAux.unityOrConstructionOnCell.GetTeam() != GetComponent<CombatStats>().GetTeam())
                             {
@@ -66,13 +76,14 @@ public class PlayerMovement : MonoBehaviour
                                 StartCoroutine(WaitUnitilStoped(cellAux, 0));
                             }
 
+                            cellAux = cellPrevAux;
                             //cellAux = GridMap.instance.grid[aux.Last.Value.x, aux.Last.Value.y];
                             Debug.Log(aux.Count);
                         }
                         else if (cellAux.unityOrConstructionOnCell && cellAux.unityOrConstructionOnCell.GetTeam() == GetComponent<CombatStats>().GetTeam())
                         {
-                            nav.SetDestinationPlayerAndCost(cellAux.GlobalPosition);
-                            LinkedList<Vector2Int> aux = nav.GetSavedPath();
+                            //nav.SetDestinationPlayerAndCost(cellAux.GlobalPosition);
+                            LinkedList<Vector2Int> aux = nav.GetPath(cellAux.GlobalPosition);
                             byte pasos = 0;
                             for (LinkedListNode<Vector2Int> auxNode = aux.First; auxNode.Value == null; auxNode = auxNode.Next)
                             {
@@ -80,16 +91,29 @@ public class PlayerMovement : MonoBehaviour
                                 pasos += GridMap.instance.grid[auxNode.Value.x, auxNode.Value.y].GetMovementCost();
                             }
 
+                            Debug.Log(aux.Count);
+                            aux.RemoveLast();
+                            Cell cellPrevAux = null;
+                            if (aux.Count != 0)
+                            {
+                                cellPrevAux = GridMap.instance.grid[aux.Last.Value.x, aux.Last.Value.y];
+                            }
+
+
                             //Debug.Log((byte)(GetComponent<Units>().GetMovementsAvailable() - pasos));
 
                             if (cellAux.unityOrConstructionOnCell.GetUnityType() == GetComponent<CombatStats>().GetUnityType())
                             {
                                 StartCoroutine(WaitUnitilStoped(cellAux, 2));
                             }
+
                             else if (cellAux.unityOrConstructionOnCell.GetUnityType() == CombatStats.UnitType.Torre)
                             {
+                                Debug.Log("Entro Torre");
                                 StartCoroutine(WaitUnitilStoped(cellAux, 3));
                             }
+
+                            cellAux = cellPrevAux;
                         }
 
                         else
@@ -98,13 +122,21 @@ public class PlayerMovement : MonoBehaviour
                         }
 
                         Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(transform.position);
-                        
-                        if (cellAux != GridMap.instance.CellFromWorldPoint(transform.position))
+
+                        /*if (cellAux != GridMap.instance.CellFromWorldPoint(transform.position))
                         {
                             GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
-                        }
+                        }*/
 
-                        nav.SetDestinationPlayer(cellAux.GlobalPosition);
+                        if (cellAux != null)
+                        {
+                            if (!GetComponent<Structures>())
+                            {
+                                nav.SetDestinationPlayer(cellAux.GlobalPosition);
+                                GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = null;
+                            }
+
+                        }
                     }
 
 
@@ -133,10 +165,28 @@ public class PlayerMovement : MonoBehaviour
                     Debug.Log("Combate");
                     CombatManager.instance.combat(GetComponent<CombatStats>(), cellToGo.unityOrConstructionOnCell);
 
-                    if (!cellToGo.unityOrConstructionOnCell)
-                    {
-                        nav.SetDestinationPlayerAndCost(cellToGo.GlobalPosition);
+                    if (GetComponent<Units>())
+                    { //Debug.Log(cellToGo.unityOrConstructionOnCell);
+
+                        if (cellToGo.unityOrConstructionOnCell == null)
+                        {
+                            Debug.Log("HI!! ^^");
+                            nav.SetDestinationPlayer(cellToGo.GlobalPosition);
+
+                            Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(cellToGo.GlobalPosition);
+                            GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = GetComponent<CombatStats>();
+                            moving = false;
+                        }
+                        else
+                        {
+                            Vector2Int pos = GridMap.instance.CellCordFromWorldPoint(transform.position);
+                            Debug.Log(pos);
+                            GridMap.instance.grid[pos.x, pos.y].unityOrConstructionOnCell = GetComponent<CombatStats>();
+                            Debug.Log(GridMap.instance.grid[pos.x, pos.y].unityOrConstructionOnCell);
+                            moving = false;
+                        }
                     }
+                    moving = false;
                     UnSelect();
                     break;
                 }
@@ -148,12 +198,15 @@ public class PlayerMovement : MonoBehaviour
                     {
                         Debug.Log("Stack2");
                         GetComponent<Units>().Stack(GetComponent<CombatStats>(), cellToGo.unityOrConstructionOnCell);
+                        nav.SetDestinationPlayer(cellToGo.GlobalPosition);
                         UnSelect();
                     }
                     break;
                 }
             case 3:
                 {
+                    Debug.Log("Entrar en torre");
+                    cellToGo.unityOrConstructionOnCell.GetComponent<Structures>().SaveUnit(GetComponent<CombatStats>(),0,0);
 
                     break;
                 }
@@ -164,14 +217,24 @@ public class PlayerMovement : MonoBehaviour
 
         }
 
-        Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(cellToGo.GlobalPosition);
-        GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = GetComponent<CombatStats>();
-        moving = false;
+        if(action != 3 && action != 1)
+        {
+            Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(cellToGo.GlobalPosition);
+            GridMap.instance.grid[coord.x, coord.y].unityOrConstructionOnCell = GetComponent<CombatStats>();
+            moving = false;
+
+        }
+
     }
 
     public bool GetSelected()
     {
         return selected;
+    }
+
+    public bool GetConstruct()
+    {
+        return construct;
     }
 
     public void Select()
@@ -185,26 +248,70 @@ public class PlayerMovement : MonoBehaviour
 
     public void UnSelect()
     {
-        GetComponent<Units>().SetMovementsAvailable(0);
+        //Vector2Int aux = GridMap.instance.CellCordFromWorldPoint(transform.position);
+        //Debug.Log(GridMap.instance.grid[aux.x, aux.y].unityOrConstructionOnCell);
+
+        if (GetComponent<Units>())
+        {
+            GetComponent<Units>().SetMovementsAvailable(0);
+        }
+        else if (GetComponent<Structures>())
+        {
+            GetComponent<Structures>().SetActionUnavaliable();
+        }
         selected = false;
+        construct = false;
         adyacents.Clear();
         while(areas.Count>0)
         {
             Destroy(areas.First.Value);
             areas.RemoveFirst();
         }
+        
 
+    }
+
+    public void Construct()
+    {
+        construct = true;
     }
 
     public void ShowAccesibles()
     {
-        byte cont = 0;
-        byte pasos = GetComponent<Units>().GetMovementsAvailable();
-        Cell cellActual = GridMap.instance.CellFromWorldPoint(transform.position);
-        Debug.Log(cellActual.CellType + "   " + GridMap.instance.CellCordFromWorldPoint(cellActual.GlobalPosition));
-        float size = GridMap.instance.GetCellRadius() * 2;
-        FindAccesibles(cellActual, cont, pasos, size);
-        ShowAreaAccesibles();
+        if (this.GetComponent<Units>())
+        {
+            byte cont = 0;
+            byte pasos = GetComponent<Units>().GetMovementsAvailable();
+            Cell cellActual = GridMap.instance.CellFromWorldPoint(transform.position);
+            //Debug.Log(cellActual.CellType + "   " + GridMap.instance.CellCordFromWorldPoint(cellActual.GlobalPosition));
+            float size = GridMap.instance.GetCellRadius() * 2;
+            FindAccesibles(cellActual, cont, pasos, size);
+            ShowAreaAccesibles();
+        }
+
+        else if (GetComponent<Structures>())
+        {
+            if (GetComponent<Structures>().GetActionAvaliable())
+            {
+                Vector2Int coord = GridMap.instance.CellCordFromWorldPoint(transform.position);
+                for (int i = -2; i < 3; i++)
+                {
+                    for (int j = -2; j < 3; j++)
+                    {
+                        if (coord.x + i >= 0 && coord.x + i < GridMap.instance.GetGridSizeX()
+                            && coord.y + j >= 0 && coord.y + j < GridMap.instance.GetGridSizeY())
+                        {
+                            Cell cellAux = GridMap.instance.CellFromWorldPoint(GridMap.instance.grid[coord.x + i, coord.y + j].GlobalPosition);
+                            adyacents.AddLast(cellAux);
+
+                        }
+                    }
+
+                }
+            }
+
+            ShowAreaAccesibles();
+        }
     }
 
     private void ShowAreaAccesibles()
@@ -234,7 +341,7 @@ public class PlayerMovement : MonoBehaviour
                     {
                         if (!adyacents.Contains(cellAux))
                         {
-                            Debug.Log(cellAux.CellType + " "+ GridMap.instance.CellCordFromWorldPoint(cellAux.GlobalPosition) + "   " + cellAux.GetMovementCost());
+                            //Debug.Log(cellAux.CellType + " "+ GridMap.instance.CellCordFromWorldPoint(cellAux.GlobalPosition) + "   " + cellAux.GetMovementCost());
                             adyacents.AddLast(cellAux);
                         }
 

@@ -262,7 +262,7 @@ public class CombatManager : MonoBehaviour {
 
         }
 
-        Debug.Log(GeneralInRange(attacker));
+        //Debug.Log(GeneralInRange(attacker));
         if (GeneralInRange(attacker))
         {
             totaldamageA += Mathf.FloorToInt((attacker.GetDamage() * generalincrement / 100));
@@ -292,7 +292,7 @@ public class CombatManager : MonoBehaviour {
                     && 0 <= (coord.y + j) && (coord.y + j) < GridMap.instance.GetGridSizeY()
                     && (i != 0) && (j != 0)) 
                 {
-                    Debug.Log(GridMap.instance.grid[coord.x + i, coord.y + j].unityOrConstructionOnCell == null);
+                    //Debug.Log(GridMap.instance.grid[coord.x + i, coord.y + j].unityOrConstructionOnCell == null);
                     if (GridMap.instance.grid[coord.x + i, coord.y + j].unityOrConstructionOnCell && GridMap.instance.grid[coord.x + i, coord.y + j].unityOrConstructionOnCell.GetComponent<CombatStats>().GetUnityType() == CombatStats.UnitType.General && GridMap.instance.grid[coord.x + i, coord.y + j].unityOrConstructionOnCell.GetComponent<CombatStats>().GetTeam() == attacker.GetTeam()) 
                     {
                      return true;

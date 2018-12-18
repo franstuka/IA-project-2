@@ -6,7 +6,7 @@ public enum UnitType { Caballeria, Peon, Lancero, General, Torre, Castillo };
 
 public class CombatStats : MonoBehaviour {
 
-    public enum CombatStatsType{ MAXFORCE, FORCE, MAXDAMAGE, DAMAGE};
+    public enum CombatStatsType{ MAXFORCE, FORCE, MAXDAMAGE, DAMAGE, TIER};
     public enum UnitType { Caballeria, Peon, Lancero, General, Torre, Castillo };
     [SerializeField] private byte tier = 0;
     [SerializeField] private float Force = 0;
@@ -14,7 +14,7 @@ public class CombatStats : MonoBehaviour {
     [SerializeField] private float MaxDamage = 0;
     [SerializeField] private float Damage;
     [SerializeField] private UnitType Type;
-    [SerializeField] private byte team;
+    [SerializeField] protected byte team;
 
     public Animator anim;
     
@@ -48,6 +48,10 @@ public class CombatStats : MonoBehaviour {
     public void SetAttack(float attack)
     {
         Force -= attack;
+        if (Force <= 0)
+        {
+            Die();
+        }
     }
 
     public float GetMaxForce()
@@ -118,6 +122,7 @@ public class CombatStats : MonoBehaviour {
                 }
                 break;
 
+
                 /*case 3:
                     Defense += valor;
                     if (Defense < 0)
@@ -153,11 +158,20 @@ public class CombatStats : MonoBehaviour {
         }
     }
 
+    public void SetStatTier(byte tier)
+    {
+        this.tier = tier;
+    }
+
     public virtual void Die()
     {
         Vector2Int aux = GridMap.instance.CellCordFromWorldPoint(transform.position);
         GridMap.instance.grid[aux.x, aux.y].unityOrConstructionOnCell = null;
-        Destroy(transform.gameObject);
+        List<LinkedList<GameObject>> units = GameManager.instance.GetUnitList();
+        Debug.Log(units[gameObject.GetComponent<CombatStats>().team].Count);
+        units[gameObject.GetComponent<CombatStats>().team].Remove(gameObject);
+        Debug.Log(units[gameObject.GetComponent<CombatStats>().team].Count);
+        Destroy(gameObject);
     }
 
     public byte GetTier()
